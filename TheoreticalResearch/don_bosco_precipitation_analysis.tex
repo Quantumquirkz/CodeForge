@@ -1,6 +1,6 @@
 \documentclass[12pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
-\usepackage[spanish,english]{babel}
+\usepackage[english]{babel}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{amsmath}
@@ -68,8 +68,8 @@
 }
 
 % Title information
-\title{\textbf{Análisis de la Reducción de Precipitación en Don Bosco, Villas de Andalucía, Panamá: Factores Climáticos, Urbanización y Cambio Climático (2000-2025)}}
-\author{Equipo de Investigación Climática}
+\title{\textbf{Analysis of Precipitation Reduction in Don Bosco, Villas de Andalucía, Panama: Climatic Factors, Urbanization, and Climate Change (2000-2025)}}
+\author{Climate Research Team}
 \date{\today}
 
 \begin{document}
@@ -81,9 +81,9 @@
 
 % Abstract
 \begin{abstract}
-\noindent Este estudio presenta un análisis exhaustivo de las variaciones en los patrones de precipitación en la zona de Don Bosco, específicamente en Villas de Andalucía, Panamá, durante el período 2000-2025. Utilizando datos históricos de la NOAA, análisis estadísticos avanzados y correlaciones con fenómenos climáticos globales como El Niño-Oscilación del Sur (ENSO), se identifican las causas principales de la reducción observada en las precipitaciones. Los resultados indican una tendencia significativa de disminución de precipitación, correlacionada con factores locales (urbanización, efecto de isla de calor urbana) y globales (cambio climático, variabilidad ENSO). El análisis estadístico revela una reducción promedio de precipitación mensual, con períodos de sequía más frecuentes y anomalías climáticas. Este documento de 80 páginas proporciona una metodología completa, análisis detallado de datos, visualizaciones y discusión de los mecanismos físicos subyacentes que explican por qué esta zona específica recibe menos precipitación comparada con otras regiones de Panamá.
+\noindent This study presents a comprehensive analysis of variations in precipitation patterns in the Don Bosco area, specifically in Villas de Andalucía, Panama, during the period 2000-2025. Using historical data from NOAA, advanced statistical analyses, and correlations with global climate phenomena such as the El Niño-Southern Oscillation (ENSO), the main causes of the observed reduction in precipitation are identified. Results indicate a significant trend of decreasing precipitation, correlated with local factors (urbanization, urban heat island effect) and global factors (climate change, ENSO variability). Statistical analysis reveals an average reduction in monthly precipitation, with more frequent drought periods and climate anomalies. This 80-page document provides a complete methodology, detailed data analysis, visualizations, and discussion of the underlying physical mechanisms that explain why this specific area receives less precipitation compared to other regions of Panama.
 
-\textbf{Palabras clave:} Precipitación, Panamá, Cambio Climático, Isla de Calor Urbana, ENSO, Análisis Estadístico, Urbanización
+\textbf{Keywords:} Precipitation, Panama, Climate Change, Urban Heat Island, ENSO, Statistical Analysis, Urbanization
 \end{abstract}
 
 \newpage
@@ -97,762 +97,762 @@
 % ============================================
 % INTRODUCTION
 % ============================================
-\section{Introducción}
+\section{Introduction}
 \label{sec:introduction}
 
-\subsection{Contexto y Justificación}
+\subsection{Context and Justification}
 
-Panamá, ubicada en el istmo centroamericano, presenta un clima tropical caracterizado por dos estaciones principales: la estación seca (diciembre a abril) y la estación lluviosa (mayo a noviembre). Sin embargo, en las últimas décadas se han observado cambios significativos en los patrones de precipitación, particularmente en áreas urbanas como la Ciudad de Panamá y sus alrededores.
+Panama, located in the Central American isthmus, has a tropical climate characterized by two main seasons: the dry season (December to April) and the rainy season (May to November). However, in recent decades, significant changes have been observed in precipitation patterns, particularly in urban areas such as Panama City and its surroundings.
 
-Don Bosco, específicamente la zona de Villas de Andalucía, ubicada en las coordenadas 8.9824°N, 79.5199°W, representa un caso de estudio particularmente relevante. Esta área ha experimentado un crecimiento urbano acelerado desde finales del siglo XX, transformándose de una zona semi-rural a un área densamente urbanizada. Esta transformación ha coincidido con cambios observables en los patrones climáticos locales, específicamente una reducción en la precipitación total anual y una alteración en la distribución temporal de las lluvias.
+Don Bosco, specifically the Villas de Andalucía area, located at coordinates 8.9824°N, 79.5199°W, represents a particularly relevant case study. This area has experienced accelerated urban growth since the late 20th century, transforming from a semi-rural zone to a densely urbanized area. This transformation has coincided with observable changes in local climate patterns, specifically a reduction in total annual precipitation and an alteration in the temporal distribution of rainfall.
 
-La importancia de este estudio radica en varios aspectos fundamentales:
-
-\begin{enumerate}
-    \item \textbf{Impacto en recursos hídricos:} La reducción de precipitación afecta directamente la disponibilidad de agua para consumo humano, agricultura y ecosistemas.
-    \item \textbf{Planificación urbana:} Comprender los factores que influyen en la precipitación es crucial para el desarrollo sostenible de áreas urbanas.
-    \item \textbf{Adaptación al cambio climático:} Identificar tendencias y causas permite desarrollar estrategias de adaptación y mitigación.
-    \item \textbf{Ciencia del clima:} Contribuye al entendimiento de cómo la urbanización y el cambio climático interactúan para modificar patrones climáticos locales.
-\end{enumerate}
-
-\subsection{Objetivos}
-
-\subsubsection{Objetivo General}
-
-Analizar y explicar las causas de la reducción en la intensidad y frecuencia de precipitaciones en Don Bosco, Villas de Andalucía, Panamá, durante el período 2000-2025, mediante el análisis de datos climáticos históricos, correlaciones con fenómenos globales y evaluación de factores locales.
-
-\subsubsection{Objetivos Específicos}
+The importance of this study lies in several fundamental aspects:
 
 \begin{enumerate}
-    \item Recopilar y procesar datos climáticos históricos (precipitación, temperatura, humedad) para el período 2000-2025.
-    \item Calcular estadísticas descriptivas y detectar tendencias temporales en los datos de precipitación.
-    \item Identificar anomalías climáticas y períodos de sequía mediante métodos estadísticos avanzados (Z-Score, descomposición STL).
-    \item Analizar la correlación entre la precipitación local y fenómenos climáticos globales, especialmente El Niño-Oscilación del Sur (ENSO).
-    \item Evaluar el impacto de factores locales como la urbanización y el efecto de isla de calor urbana.
-    \item Generar visualizaciones de alta calidad que ilustren los patrones y tendencias identificados.
-    \item Proporcionar una explicación científica fundamentada de por qué esta zona específica recibe menos precipitación comparada con otras regiones.
+    \item \textbf{Impact on water resources:} The reduction in precipitation directly affects water availability for human consumption, agriculture, and ecosystems.
+    \item \textbf{Urban planning:} Understanding the factors that influence precipitation is crucial for the sustainable development of urban areas.
+    \item \textbf{Climate change adaptation:} Identifying trends and causes allows for the development of adaptation and mitigation strategies.
+    \item \textbf{Climate science:} Contributes to understanding how urbanization and climate change interact to modify local climate patterns.
 \end{enumerate}
 
-\subsection{Alcance del Estudio}
+\subsection{Objectives}
 
-Este estudio se enfoca en el análisis de datos climáticos para el período 2000-2025, con énfasis en la zona de Don Bosco, Villas de Andalucía. El análisis incluye:
+\subsubsection{General Objective}
+
+Analyze and explain the causes of the reduction in the intensity and frequency of precipitation in Don Bosco, Villas de Andalucía, Panama, during the period 2000-2025, through the analysis of historical climate data, correlations with global phenomena, and evaluation of local factors.
+
+\subsubsection{Specific Objectives}
+
+\begin{enumerate}
+    \item Collect and process historical climate data (precipitation, temperature, humidity) for the period 2000-2025.
+    \item Calculate descriptive statistics and detect temporal trends in precipitation data.
+    \item Identify climate anomalies and drought periods using advanced statistical methods (Z-Score, STL decomposition).
+    \item Analyze the correlation between local precipitation and global climate phenomena, especially the El Niño-Southern Oscillation (ENSO).
+    \item Evaluate the impact of local factors such as urbanization and the urban heat island effect.
+    \item Generate high-quality visualizations that illustrate the identified patterns and trends.
+    \item Provide a scientifically grounded explanation of why this specific area receives less precipitation compared to other regions.
+\end{enumerate}
+
+\subsection{Study Scope}
+
+This study focuses on the analysis of climate data for the period 2000-2025, with emphasis on the Don Bosco, Villas de Andalucía area. The analysis includes:
 
 \begin{itemize}
-    \item Datos de precipitación mensual y anual
-    \item Datos de temperatura (promedio, máxima, mínima)
-    \item Correlación con índices ENSO (ONI - Oceanic Niño Index)
-    \item Análisis estadístico de tendencias y anomalías
-    \item Comparación con patrones climáticos regionales
+    \item Monthly and annual precipitation data
+    \item Temperature data (average, maximum, minimum)
+    \item Correlation with ENSO indices (ONI - Oceanic Niño Index)
+    \item Statistical analysis of trends and anomalies
+    \item Comparison with regional climate patterns
 \end{itemize}
 
-\subsection{Estructura del Documento}
+\subsection{Document Structure}
 
-Este documento está organizado en las siguientes secciones:
+This document is organized into the following sections:
 
 \begin{itemize}
-    \item \textbf{Sección 2:} Revisión de literatura sobre precipitación, cambio climático y efectos urbanos
-    \item \textbf{Sección 3:} Metodología detallada de recopilación y análisis de datos
-    \item \textbf{Sección 4:} Resultados del análisis estadístico y visualizaciones
-    \item \textbf{Sección 5:} Discusión de los hallazgos y mecanismos físicos
-    \item \textbf{Sección 6:} Conclusiones y recomendaciones
-    \item \textbf{Apéndices:} Código Python, datos adicionales, referencias completas
+    \item \textbf{Section 2:} Literature review on precipitation, climate change, and urban effects
+    \item \textbf{Section 3:} Detailed methodology for data collection and analysis
+    \item \textbf{Section 4:} Results of statistical analysis and visualizations
+    \item \textbf{Section 5:} Discussion of findings and physical mechanisms
+    \item \textbf{Section 6:} Conclusions and recommendations
+    \item \textbf{Appendices:} Python code, additional data, complete references
 \end{itemize}
 
 % ============================================
 % LITERATURE REVIEW
 % ============================================
-\section{Revisión de Literatura}
+\section{Literature Review}
 \label{sec:literature}
 
-\subsection{Climatología de Panamá}
+\subsection{Panama Climatology}
 
-Panamá se encuentra en una región climática compleja, influenciada por múltiples sistemas atmosféricos. El país experimenta un clima tropical húmedo, con precipitación anual que varía significativamente según la ubicación geográfica. La vertiente del Pacífico, donde se encuentra Don Bosco, generalmente recibe menos precipitación que la vertiente del Caribe debido a los efectos orográficos y a los vientos alisios.
+Panama is located in a complex climate region, influenced by multiple atmospheric systems. The country experiences a humid tropical climate, with annual precipitation that varies significantly according to geographic location. The Pacific slope, where Don Bosco is located, generally receives less precipitation than the Caribbean slope due to orographic effects and trade winds.
 
-Los estudios históricos sobre el clima de Panamá han documentado variaciones interanuales significativas, principalmente asociadas con la variabilidad de El Niño-Oscilación del Sur (ENSO). Durante eventos de El Niño, Panamá típicamente experimenta condiciones más secas, mientras que La Niña está asociada con precipitación aumentada \cite{noaa_enso}.
+Historical studies on Panama's climate have documented significant interannual variations, primarily associated with El Niño-Southern Oscillation (ENSO) variability. During El Niño events, Panama typically experiences drier conditions, while La Niña is associated with increased precipitation \cite{noaa_enso}.
 
-\subsection{Efecto de Isla de Calor Urbana (UHI)}
+\subsection{Urban Heat Island Effect (UHI)}
 
-El efecto de isla de calor urbana es un fenómeno bien documentado donde las áreas urbanas experimentan temperaturas significativamente más altas que las áreas rurales circundantes. Este fenómeno resulta de varios factores:
-
-\begin{enumerate}
-    \item \textbf{Absorción de radiación solar:} Materiales de construcción como concreto y asfalto tienen mayor capacidad de absorción de calor que la vegetación natural.
-    \item \textbf{Reducción de evapotranspiración:} La falta de vegetación reduce el enfriamiento por evaporación.
-    \item \textbf{Emisión de calor antropogénico:} Actividades humanas generan calor adicional.
-    \item \textbf{Geometría urbana:} Edificios altos atrapan y reflejan calor, reduciendo la pérdida de calor por radiación.
-\end{enumerate}
-
-El efecto UHI puede influir en los patrones de precipitación de varias maneras:
-
-\begin{itemize}
-    \item \textbf{Inestabilidad térmica:} El calentamiento urbano puede crear condiciones de inestabilidad atmosférica que favorecen la formación de nubes convectivas, pero también puede crear una "cúpula" de alta presión que inhibe la precipitación.
-    \item \textbf{Alteración de vientos:} La rugosidad superficial aumentada puede alterar los patrones de viento y la convergencia de masas de aire.
-    \item \textbf{Reducción de humedad:} Menor vegetación significa menos evapotranspiración, reduciendo la humedad disponible para la formación de precipitación.
-\end{itemize}
-
-Estudios en otras ciudades tropicales han documentado reducciones en precipitación asociadas con la urbanización \cite{urban_precipitation}.
-
-\subsection{Cambio Climático Global}
-
-El Panel Intergubernamental sobre Cambio Climático (IPCC) ha documentado cambios significativos en los patrones de precipitación globales asociados con el cambio climático antropogénico. En regiones tropicales, se observan tendencias hacia:
-
-\begin{itemize}
-    \item Mayor variabilidad en precipitación
-    \item Cambios en la frecuencia e intensidad de eventos extremos
-    \item Alteraciones en los patrones estacionales
-    \item Reducción en algunas regiones, aumento en otras
-\end{itemize}
-
-Para Centroamérica, los modelos climáticos proyectan una reducción general en precipitación durante la estación seca y cambios en la distribución temporal de las lluvias \cite{ipcc_ar6}.
-
-\subsection{El Niño-Oscilación del Sur (ENSO)}
-
-ENSO es el principal modulador de la variabilidad climática interanual en la región del Pacífico tropical. El índice ONI (Oceanic Niño Index) mide las anomalías de temperatura superficial del mar en la región Niño 3.4.
-
-\begin{itemize}
-    \item \textbf{El Niño (ONI > +0.5):} Asociado con condiciones más secas en Panamá, reducción en precipitación, aumento de temperatura.
-    \item \textbf{La Niña (ONI < -0.5):} Asociada con condiciones más húmedas, aumento en precipitación.
-    \item \textbf{Neutral:} Condiciones normales, precipitación cerca del promedio histórico.
-\end{itemize}
-
-La frecuencia e intensidad de eventos ENSO ha mostrado variabilidad en las últimas décadas, con algunos estudios sugiriendo cambios en los patrones debido al cambio climático \cite{enso_changes}.
-
-\subsection{Factores Locales Específicos de Don Bosco}
-
-Don Bosco, Villas de Andalucía, ha experimentado transformaciones significativas:
+The urban heat island effect is a well-documented phenomenon where urban areas experience significantly higher temperatures than surrounding rural areas. This phenomenon results from several factors:
 
 \begin{enumerate}
-    \item \textbf{Expansión urbana:} De área semi-rural a zona residencial densa desde los años 1990s.
-    \item \textbf{Pavimentación:} Aumento significativo de superficies impermeables.
-    \item \textbf{Reducción de vegetación:} Pérdida de áreas verdes y árboles.
-    \item \textbf{Desarrollo de infraestructura:} Construcción de edificios, carreteras, centros comerciales.
+    \item \textbf{Solar radiation absorption:} Construction materials such as concrete and asphalt have greater heat absorption capacity than natural vegetation.
+    \item \textbf{Reduced evapotranspiration:} Lack of vegetation reduces cooling through evaporation.
+    \item \textbf{Anthropogenic heat emission:} Human activities generate additional heat.
+    \item \textbf{Urban geometry:} Tall buildings trap and reflect heat, reducing heat loss through radiation.
 \end{enumerate}
 
-Estos cambios locales, combinados con factores climáticos globales, pueden explicar las observaciones de reducción en precipitación.
+The UHI effect can influence precipitation patterns in several ways:
+
+\begin{itemize}
+    \item \textbf{Thermal instability:} Urban warming can create conditions of atmospheric instability that favor the formation of convective clouds, but can also create a "dome" of high pressure that inhibits precipitation.
+    \item \textbf{Wind alteration:} Increased surface roughness can alter wind patterns and air mass convergence.
+    \item \textbf{Humidity reduction:} Less vegetation means less evapotranspiration, reducing the humidity available for precipitation formation.
+\end{itemize}
+
+Studies in other tropical cities have documented reductions in precipitation associated with urbanization \cite{urban_precipitation}.
+
+\subsection{Global Climate Change}
+
+The Intergovernmental Panel on Climate Change (IPCC) has documented significant changes in global precipitation patterns associated with anthropogenic climate change. In tropical regions, trends are observed toward:
+
+\begin{itemize}
+    \item Greater variability in precipitation
+    \item Changes in the frequency and intensity of extreme events
+    \item Alterations in seasonal patterns
+    \item Reduction in some regions, increase in others
+\end{itemize}
+
+For Central America, climate models project a general reduction in precipitation during the dry season and changes in the temporal distribution of rainfall \cite{ipcc_ar6}.
+
+\subsection{El Niño-Southern Oscillation (ENSO)}
+
+ENSO is the primary modulator of interannual climate variability in the tropical Pacific region. The ONI (Oceanic Niño Index) measures sea surface temperature anomalies in the Niño 3.4 region.
+
+\begin{itemize}
+    \item \textbf{El Niño (ONI > +0.5):} Associated with drier conditions in Panama, reduction in precipitation, temperature increase.
+    \item \textbf{La Niña (ONI < -0.5):} Associated with wetter conditions, increase in precipitation.
+    \item \textbf{Neutral:} Normal conditions, precipitation near historical average.
+\end{itemize}
+
+The frequency and intensity of ENSO events have shown variability in recent decades, with some studies suggesting changes in patterns due to climate change \cite{enso_changes}.
+
+\subsection{Local Factors Specific to Don Bosco}
+
+Don Bosco, Villas de Andalucía, has experienced significant transformations:
+
+\begin{enumerate}
+    \item \textbf{Urban expansion:} From semi-rural area to dense residential zone since the 1990s.
+    \item \textbf{Pavement:} Significant increase in impermeable surfaces.
+    \item \textbf{Vegetation reduction:} Loss of green areas and trees.
+    \item \textbf{Infrastructure development:} Construction of buildings, roads, shopping centers.
+\end{enumerate}
+
+These local changes, combined with global climate factors, may explain the observations of reduced precipitation.
 
 % ============================================
 % METHODOLOGY
 % ============================================
-\section{Metodología}
+\section{Methodology}
 \label{sec:methodology}
 
-\subsection{Ubicación del Estudio}
+\subsection{Study Location}
 
-El área de estudio se centra en Don Bosco, específicamente Villas de Andalucía, ubicada en:
+The study area focuses on Don Bosco, specifically Villas de Andalucía, located at:
 \begin{itemize}
-    \item \textbf{Latitud:} 8.9824°N
-    \item \textbf{Longitud:} 79.5199°W
-    \item \textbf{Región:} Ciudad de Panamá, Panamá
-    \item \textbf{Elevación:} Aproximadamente 30-50 metros sobre el nivel del mar
+    \item \textbf{Latitude:} 8.9824°N
+    \item \textbf{Longitude:} 79.5199°W
+    \item \textbf{Region:} Panama City, Panama
+    \item \textbf{Elevation:} Approximately 30-50 meters above sea level
 \end{itemize}
 
-Esta ubicación se encuentra en la vertiente del Pacífico de Panamá, en una zona que ha experimentado urbanización acelerada desde finales del siglo XX.
+This location is on the Pacific slope of Panama, in an area that has experienced accelerated urbanization since the late 20th century.
 
-\subsection{Recopilación de Datos}
+\subsection{Data Collection}
 
-\subsubsection{Fuentes de Datos}
+\subsubsection{Data Sources}
 
-Los datos climáticos utilizados en este estudio provienen de múltiples fuentes:
+The climate data used in this study come from multiple sources:
 
 \begin{enumerate}
     \item \textbf{NOAA (National Oceanic and Atmospheric Administration):}
     \begin{itemize}
-        \item Base de datos: Global Summary of the Day (GSOD)
-        \item Variables: Precipitación diaria, temperatura (promedio, máxima, mínima), humedad
-        \item Período: 2000-2025
-        \item Resolución temporal: Diaria
+        \item Database: Global Summary of the Day (GSOD)
+        \item Variables: Daily precipitation, temperature (average, maximum, minimum), humidity
+        \item Period: 2000-2025
+        \item Temporal resolution: Daily
         \item API: \texttt{https://www.ncei.noaa.gov/access/services/data/v1}
     \end{itemize}
     
-    \item \textbf{Índices ENSO:}
+    \item \textbf{ENSO Indices:}
     \begin{itemize}
-        \item Índice: Oceanic Niño Index (ONI)
-        \item Fuente: NOAA Climate Prediction Center
-        \item Resolución: Mensual
-        \item Período: 2000-2025
+        \item Index: Oceanic Niño Index (ONI)
+        \item Source: NOAA Climate Prediction Center
+        \item Resolution: Monthly
+        \item Period: 2000-2025
     \end{itemize}
 \end{enumerate}
 
-\subsubsection{Procesamiento de Datos}
+\subsubsection{Data Processing}
 
-El procesamiento de datos se realizó mediante scripts en Python, siguiendo los siguientes pasos:
+Data processing was performed using Python scripts, following these steps:
 
 \begin{enumerate}
-    \item \textbf{Descarga de datos:} Utilizando APIs de NOAA para obtener datos diarios.
-    \item \textbf{Limpieza de datos:}
+    \item \textbf{Data download:} Using NOAA APIs to obtain daily data.
+    \item \textbf{Data cleaning:}
     \begin{itemize}
-        \item Eliminación de valores faltantes y duplicados
-        \item Detección y corrección de valores atípicos
-        \item Validación de rangos físicos (precipitación $\geq$ 0, temperaturas razonables)
-        \item Interpolación temporal para valores faltantes
+        \item Removal of missing values and duplicates
+        \item Detection and correction of outliers
+        \item Validation of physical ranges (precipitation $\geq$ 0, reasonable temperatures)
+        \item Temporal interpolation for missing values
     \end{itemize}
     
-    \item \textbf{Agregación temporal:}
+    \item \textbf{Temporal aggregation:}
     \begin{itemize}
-        \item Agregación diaria a mensual (suma para precipitación, promedio para temperatura)
-        \item Cálculo de estadísticas anuales
+        \item Daily to monthly aggregation (sum for precipitation, average for temperature)
+        \item Calculation of annual statistics
     \end{itemize}
     
-    \item \textbf{Almacenamiento:}
+    \item \textbf{Storage:}
     \begin{itemize}
-        \item Formato CSV para análisis
-        \item Formato Parquet para eficiencia
+        \item CSV format for analysis
+        \item Parquet format for efficiency
     \end{itemize}
 \end{enumerate}
 
-\subsection{Análisis Estadístico}
+\subsection{Statistical Analysis}
 
-\subsubsection{Estadísticas Descriptivas}
+\subsubsection{Descriptive Statistics}
 
-Se calcularon las siguientes estadísticas para la precipitación mensual:
+The following statistics were calculated for monthly precipitation:
 
 \begin{itemize}
-    \item Media aritmética: $\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i$
-    \item Desviación estándar: $\sigma = \sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(x_i - \bar{x})^2}$
-    \item Valores mínimo y máximo
-    \item Mediana y cuartiles (Q1, Q3)
-    \item Coeficiente de variación: $CV = \frac{\sigma}{\bar{x}} \times 100\%$
+    \item Arithmetic mean: $\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i$
+    \item Standard deviation: $\sigma = \sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(x_i - \bar{x})^2}$
+    \item Minimum and maximum values
+    \item Median and quartiles (Q1, Q3)
+    \item Coefficient of variation: $CV = \frac{\sigma}{\bar{x}} \times 100\%$
 \end{itemize}
 
-\subsubsection{Análisis de Tendencias}
+\subsubsection{Trend Analysis}
 
-Para detectar tendencias temporales en la precipitación, se utilizó regresión lineal:
+To detect temporal trends in precipitation, linear regression was used:
 
 \begin{equation}
 P(t) = \alpha + \beta t + \epsilon
 \end{equation}
 
-donde:
+where:
 \begin{itemize}
-    \item $P(t)$ es la precipitación en el tiempo $t$
-    \item $\alpha$ es la ordenada al origen
-    \item $\beta$ es la pendiente (tendencia)
-    \item $\epsilon$ es el error residual
+    \item $P(t)$ is precipitation at time $t$
+    \item $\alpha$ is the y-intercept
+    \item $\beta$ is the slope (trend)
+    \item $\epsilon$ is the residual error
 \end{itemize}
 
-Se calculó:
+The following were calculated:
 \begin{itemize}
-    \item Coeficiente de determinación ($R^2$)
-    \item Valor p para probar la significancia estadística ($H_0: \beta = 0$)
-    \item Cambio porcentual total y anual
+    \item Coefficient of determination ($R^2$)
+    \item p-value to test statistical significance ($H_0: \beta = 0$)
+    \item Total and annual percentage change
 \end{itemize}
 
-\subsubsection{Detección de Anomalías}
+\subsubsection{Anomaly Detection}
 
-Se utilizaron dos métodos para detectar anomalías:
+Two methods were used to detect anomalies:
 
-\textbf{1. Método Z-Score:}
+\textbf{1. Z-Score Method:}
 
 \begin{equation}
 Z_i = \frac{x_i - \bar{x}}{\sigma}
 \end{equation}
 
-Un valor se considera anómalo si $|Z_i| > 2.5$ (umbral utilizado en este estudio).
+A value is considered anomalous if $|Z_i| > 2.5$ (threshold used in this study).
 
-\textbf{2. Descomposición STL (Seasonal and Trend decomposition using Loess):}
+\textbf{2. STL Decomposition (Seasonal and Trend decomposition using Loess):}
 
-La descomposición STL separa una serie temporal en tres componentes:
+STL decomposition separates a time series into three components:
 
 \begin{equation}
 Y(t) = T(t) + S(t) + R(t)
 \end{equation}
 
-donde:
+where:
 \begin{itemize}
-    \item $T(t)$ es la tendencia
-    \item $S(t)$ es la componente estacional
-    \item $R(t)$ es el residuo
+    \item $T(t)$ is the trend
+    \item $S(t)$ is the seasonal component
+    \item $R(t)$ is the residual
 \end{itemize}
 
-Las anomalías se identifican en el componente residual cuando $|R(t)| > k\sigma_R$, donde $\sigma_R$ es la desviación estándar del residuo y $k$ es un factor de umbral.
+Anomalies are identified in the residual component when $|R(t)| > k\sigma_R$, where $\sigma_R$ is the standard deviation of the residual and $k$ is a threshold factor.
 
-\subsubsection{Correlación con ENSO}
+\subsubsection{Correlation with ENSO}
 
-Se calculó el coeficiente de correlación de Pearson entre la precipitación mensual y el índice ONI:
+The Pearson correlation coefficient was calculated between monthly precipitation and the ONI index:
 
 \begin{equation}
 r = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i - \bar{x})^2}\sqrt{\sum_{i=1}^{n}(y_i - \bar{y})^2}}
 \end{equation}
 
-donde $x_i$ es la precipitación y $y_i$ es el índice ONI.
+where $x_i$ is precipitation and $y_i$ is the ONI index.
 
-Se realizó una prueba de significancia ($H_0: r = 0$) para determinar si la correlación es estadísticamente significativa.
+A significance test ($H_0: r = 0$) was performed to determine if the correlation is statistically significant.
 
-\subsubsection{Detección de Sequías}
+\subsubsection{Drought Detection}
 
-Se utilizó un método basado en percentiles para identificar períodos de sequía:
+A percentile-based method was used to identify drought periods:
 
 \begin{itemize}
-    \item Un mes se considera en sequía si su precipitación está por debajo del percentil 25 de la distribución histórica.
-    \item Se identificaron períodos consecutivos de sequía (duración).
-    \item Se calculó la intensidad de la sequía como la desviación del promedio histórico.
+    \item A month is considered in drought if its precipitation is below the 25th percentile of the historical distribution.
+    \item Consecutive drought periods (duration) were identified.
+    \item Drought intensity was calculated as the deviation from the historical average.
 \end{itemize}
 
-\subsection{Visualización}
+\subsection{Visualization}
 
-Se generaron múltiples visualizaciones utilizando Python (matplotlib, seaborn, plotly, cartopy):
+Multiple visualizations were generated using Python (matplotlib, seaborn, plotly, cartopy):
 
 \begin{enumerate}
-    \item \textbf{Series temporales:} Precipitación mensual vs. tiempo
-    \item \textbf{Anomalías:} Gráficos de anomalías con identificación de períodos anómalos
-    \item \textbf{Heatmaps:} Precipitación mensual por año (matriz año-mes)
-    \item \textbf{Boxplots:} Distribución anual de precipitación
-    \item \textbf{Correlación:} Gráficos de dispersión y correlación con ENSO
-    \item \textbf{Mapas:} Ubicación geográfica del área de estudio
-    \item \textbf{Matrices de correlación:} Correlaciones entre variables climáticas
+    \item \textbf{Time series:} Monthly precipitation vs. time
+    \item \textbf{Anomalies:} Anomaly plots with identification of anomalous periods
+    \item \textbf{Heatmaps:} Monthly precipitation by year (year-month matrix)
+    \item \textbf{Boxplots:} Annual distribution of precipitation
+    \item \textbf{Correlation:} Scatter plots and correlation with ENSO
+    \item \textbf{Maps:} Geographic location of the study area
+    \item \textbf{Correlation matrices:} Correlations between climate variables
 \end{enumerate}
 
-Todas las figuras se generaron con resolución de 300 DPI para publicación de alta calidad.
+All figures were generated at 300 DPI resolution for high-quality publication.
 
 % ============================================
 % RESULTS
 % ============================================
-\section{Resultados}
+\section{Results}
 \label{sec:results}
 
-\subsection{Estadísticas Descriptivas}
+\subsection{Descriptive Statistics}
 
-El análisis de los datos mensuales de precipitación para el período 2000-2025 revela las siguientes estadísticas:
+Analysis of monthly precipitation data for the period 2000-2025 reveals the following statistics:
 
 \begin{table}[H]
 \centering
-\caption{Estadísticas descriptivas de precipitación mensual (2000-2025)}
+\caption{Descriptive statistics of monthly precipitation (2000-2025)}
 \label{tab:stats}
 \begin{tabular}{lr}
 \toprule
-\textbf{Estadística} & \textbf{Valor} \\
+\textbf{Statistic} & \textbf{Value} \\
 \midrule
-Número de meses & 312 \\
-Media (mm/mes) & 3911.53 \\
-Desviación estándar (mm) & 2013.37 \\
-Mínimo (mm) & 928.65 \\
-Máximo (mm) & 9250.02 \\
-Coeficiente de variación (\%) & 51.5 \\
+Number of months & 312 \\
+Mean (mm/month) & 3911.53 \\
+Standard deviation (mm) & 2013.37 \\
+Minimum (mm) & 928.65 \\
+Maximum (mm) & 9250.02 \\
+Coefficient of variation (\%) & 51.5 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Los datos muestran una variabilidad significativa en la precipitación mensual, característica de climas tropicales con estaciones marcadas.
+The data show significant variability in monthly precipitation, characteristic of tropical climates with marked seasons.
 
-\subsection{Análisis de Tendencias}
+\subsection{Trend Analysis}
 
-El análisis de regresión lineal revela una tendencia significativa de reducción en la precipitación durante el período de estudio. Los resultados indican:
+Linear regression analysis reveals a significant trend of reduction in precipitation during the study period. Results indicate:
 
 \begin{itemize}
-    \item \textbf{Cambio total:} Reducción porcentual significativa en el período 2000-2025
-    \item \textbf{Cambio anual:} Tasa de cambio porcentual por año
-    \item \textbf{Significancia estadística:} Valor p < 0.05 indica tendencia estadísticamente significativa
-    \item \textbf{Coeficiente de determinación:} $R^2$ indica la proporción de varianza explicada por la tendencia
+    \item \textbf{Total change:} Significant percentage reduction in the period 2000-2025
+    \item \textbf{Annual change:} Percentage change rate per year
+    \item \textbf{Statistical significance:} p-value < 0.05 indicates statistically significant trend
+    \item \textbf{Coefficient of determination:} $R^2$ indicates the proportion of variance explained by the trend
 \end{itemize}
 
-Esta tendencia de reducción es consistente con observaciones globales de cambios en patrones de precipitación asociados con cambio climático y urbanización.
+This reduction trend is consistent with global observations of changes in precipitation patterns associated with climate change and urbanization.
 
-\subsection{Visualizaciones}
+\subsection{Visualizations}
 
-\subsubsection{Serie Temporal de Precipitación}
+\subsubsection{Precipitation Time Series}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{DonBosco_Climate/plots/precipitacion_temporal.png}
-\caption{Serie temporal de precipitación mensual en Don Bosco, Villas de Andalucía (2000-2025). La línea azul muestra la precipitación mensual observada, mientras que la línea roja representa la tendencia lineal calculada mediante regresión. Se observa una clara tendencia descendente a lo largo del período, con variabilidad estacional característica del clima tropical panameño. Los picos más altos corresponden típicamente a los meses de la estación lluviosa (mayo-noviembre), mientras que los valores más bajos ocurren durante la estación seca (diciembre-abril).}
+\caption{Time series of monthly precipitation in Don Bosco, Villas de Andalucía (2000-2025). The blue line shows observed monthly precipitation, while the red line represents the linear trend calculated through regression. A clear downward trend is observed throughout the period, with seasonal variability characteristic of Panamanian tropical climate. The highest peaks typically correspond to months of the rainy season (May-November), while the lowest values occur during the dry season (December-April).}
 \label{fig:time_series}
 \end{figure}
 
-La Figura \ref{fig:time_series} muestra la evolución temporal de la precipitación mensual. Se observan varios aspectos importantes:
+Figure \ref{fig:time_series} shows the temporal evolution of monthly precipitation. Several important aspects are observed:
 
 \begin{enumerate}
-    \item \textbf{Patrón estacional:} Ciclos anuales claros con estación lluviosa (mayo-noviembre) y estación seca (diciembre-abril).
-    \item \textbf{Tendencia descendente:} La línea de tendencia muestra una reducción general en la precipitación a lo largo del período.
-    \item \textbf{Variabilidad interanual:} Variaciones significativas entre años, posiblemente asociadas con eventos ENSO.
-    \item \textbf{Eventos extremos:} Algunos meses muestran valores excepcionalmente altos o bajos.
+    \item \textbf{Seasonal pattern:} Clear annual cycles with rainy season (May-November) and dry season (December-April).
+    \item \textbf{Downward trend:} The trend line shows a general reduction in precipitation throughout the period.
+    \item \textbf{Interannual variability:} Significant variations between years, possibly associated with ENSO events.
+    \item \textbf{Extreme events:} Some months show exceptionally high or low values.
 \end{enumerate}
 
-\subsubsection{Anomalías de Precipitación}
+\subsubsection{Precipitation Anomalies}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{DonBosco_Climate/plots/anomalias_precipitacion.png}
-\caption{Anomalías de precipitación mensual detectadas mediante el método Z-Score. Los valores positivos (barras azules) indican meses con precipitación por encima del promedio, mientras que los valores negativos (barras rojas) indican meses con precipitación por debajo del promedio. Las líneas horizontales en ±2.5σ marcan el umbral para identificar anomalías estadísticamente significativas. Se observa un aumento en la frecuencia de anomalías negativas (sequías) en la segunda mitad del período de estudio, particularmente después de 2010.}
+\caption{Monthly precipitation anomalies detected using the Z-Score method. Positive values (blue bars) indicate months with precipitation above average, while negative values (red bars) indicate months with precipitation below average. Horizontal lines at ±2.5σ mark the threshold for identifying statistically significant anomalies. An increase in the frequency of negative anomalies (droughts) is observed in the second half of the study period, particularly after 2010.}
 \label{fig:anomalies}
 \end{figure}
 
-La Figura \ref{fig:anomalies} revela patrones importantes en las anomalías:
+Figure \ref{fig:anomalies} reveals important patterns in anomalies:
 
 \begin{itemize}
-    \item \textbf{Distribución temporal:} Las anomalías negativas (sequías) se vuelven más frecuentes en años recientes.
-    \item \textbf{Magnitud:} Algunas anomalías exceden 3 desviaciones estándar, indicando eventos extremos.
-    \item \textbf{Persistencia:} Períodos consecutivos de anomalías negativas sugieren sequías prolongadas.
-    \item \textbf{Asimetría:} Mayor frecuencia de anomalías negativas que positivas en la última década.
+    \item \textbf{Temporal distribution:} Negative anomalies (droughts) become more frequent in recent years.
+    \item \textbf{Magnitude:} Some anomalies exceed 3 standard deviations, indicating extreme events.
+    \item \textbf{Persistence:} Consecutive periods of negative anomalies suggest prolonged droughts.
+    \item \textbf{Asymmetry:} Higher frequency of negative anomalies than positive ones in the last decade.
 \end{itemize}
 
-\subsubsection{Heatmap de Precipitación Mensual}
+\subsubsection{Monthly Precipitation Heatmap}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{DonBosco_Climate/plots/heatmap_precipitacion_mensual.png}
-\caption{Heatmap (mapa de calor) de precipitación mensual por año. Cada celda representa la precipitación de un mes específico en un año dado, codificada por color (escala de azul oscuro para valores bajos a amarillo/rojo para valores altos). Este tipo de visualización permite identificar patrones estacionales, años anómalos, y tendencias a largo plazo. Se observa claramente el patrón estacional (valores más altos en meses de mayo a noviembre) y una tendencia general hacia colores más oscuros (menor precipitación) en años más recientes, particularmente en la estación lluviosa.}
+\caption{Heatmap of monthly precipitation by year. Each cell represents the precipitation of a specific month in a given year, color-coded (scale from dark blue for low values to yellow/red for high values). This type of visualization allows identification of seasonal patterns, anomalous years, and long-term trends. The seasonal pattern is clearly observed (higher values in May to November months) and a general trend toward darker colors (lower precipitation) in more recent years, particularly in the rainy season.}
 \label{fig:heatmap}
 \end{figure}
 
-El heatmap (Figura \ref{fig:heatmap}) proporciona una visión integral de los patrones:
+The heatmap (Figure \ref{fig:heatmap}) provides a comprehensive view of patterns:
 
 \begin{enumerate}
-    \item \textbf{Estacionalidad:} Banda horizontal clara mostrando mayor precipitación en meses de estación lluviosa.
-    \item \textbf{Variabilidad interanual:} Diferentes años muestran diferentes intensidades de color, indicando variabilidad.
-    \item \textbf{Tendencias:} Transición gradual hacia colores más oscuros (menor precipitación) en años recientes.
-    \item \textbf{Eventos extremos:} Celdas con colores muy intensos (positivos o negativos) indican meses excepcionales.
+    \item \textbf{Seasonality:} Clear horizontal band showing higher precipitation in rainy season months.
+    \item \textbf{Interannual variability:} Different years show different color intensities, indicating variability.
+    \item \textbf{Trends:} Gradual transition toward darker colors (lower precipitation) in recent years.
+    \item \textbf{Extreme events:} Cells with very intense colors (positive or negative) indicate exceptional months.
 \end{enumerate}
 
-\subsubsection{Distribución Anual de Precipitación}
+\subsubsection{Annual Precipitation Distribution}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{DonBosco_Climate/plots/boxplot_precipitacion_anual.png}
-\caption{Boxplot (diagrama de caja y bigotes) de precipitación anual. Cada caja representa la distribución de precipitación mensual para un año específico. La línea central de la caja indica la mediana, los bordes de la caja muestran el primer y tercer cuartil (Q1 y Q3), y los bigotes se extienden hasta 1.5 veces el rango intercuartílico. Los puntos fuera de los bigotes representan valores atípicos. Este gráfico permite comparar la distribución de precipitación entre años y identificar años con características inusuales. Se observa una reducción general en la mediana anual y una mayor variabilidad en años recientes.}
+\caption{Boxplot (box and whisker diagram) of annual precipitation. Each box represents the distribution of monthly precipitation for a specific year. The central line of the box indicates the median, the box edges show the first and third quartiles (Q1 and Q3), and the whiskers extend to 1.5 times the interquartile range. Points outside the whiskers represent outliers. This graph allows comparison of precipitation distribution between years and identification of years with unusual characteristics. A general reduction in annual median and greater variability in recent years is observed.}
 \label{fig:boxplot}
 \end{figure}
 
-El boxplot anual (Figura \ref{fig:boxplot}) muestra:
+The annual boxplot (Figure \ref{fig:boxplot}) shows:
 
 \begin{itemize}
-    \item \textbf{Tendencias en la mediana:} Reducción gradual de la mediana anual de precipitación.
-    \item \textbf{Variabilidad:} Aumento en la variabilidad interanual en años recientes.
-    \item \textbf{Valores atípicos:} Años con precipitación excepcionalmente alta o baja.
-    \item \textbf{Rangos:} Comparación de rangos intercuartílicos entre años.
+    \item \textbf{Median trends:} Gradual reduction in annual precipitation median.
+    \item \textbf{Variability:} Increase in interannual variability in recent years.
+    \item \textbf{Outliers:} Years with exceptionally high or low precipitation.
+    \item \textbf{Ranges:} Comparison of interquartile ranges between years.
 \end{itemize}
 
-\subsubsection{Correlación con ENSO}
+\subsubsection{Correlation with ENSO}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{DonBosco_Climate/plots/matriz_correlacion.png}
-\caption{Matriz de correlación entre variables climáticas. Este gráfico muestra los coeficientes de correlación de Pearson entre diferentes variables (precipitación, temperatura promedio, temperatura máxima, temperatura mínima). Los valores van de -1 (correlación negativa perfecta) a +1 (correlación positiva perfecta), con colores que indican la fuerza y dirección de la correlación. Se observa una correlación negativa entre precipitación y temperatura, lo cual es esperado en climas tropicales (períodos más secos tienden a ser más cálidos). La correlación con índices ENSO (si incluida) muestra la influencia de fenómenos climáticos globales en la precipitación local.}
+\caption{Correlation matrix between climate variables. This graph shows Pearson correlation coefficients between different variables (precipitation, average temperature, maximum temperature, minimum temperature). Values range from -1 (perfect negative correlation) to +1 (perfect positive correlation), with colors indicating the strength and direction of correlation. A negative correlation between precipitation and temperature is observed, which is expected in tropical climates (drier periods tend to be warmer). Correlation with ENSO indices (if included) shows the influence of global climate phenomena on local precipitation.}
 \label{fig:correlation}
 \end{figure}
 
-La matriz de correlación (Figura \ref{fig:correlation}) revela relaciones importantes:
+The correlation matrix (Figure \ref{fig:correlation}) reveals important relationships:
 
 \begin{enumerate}
-    \item \textbf{Precipitación vs. Temperatura:} Correlación negativa, consistente con patrones climáticos tropicales.
-    \item \textbf{Temperaturas entre sí:} Correlaciones positivas fuertes entre temperaturas promedio, máxima y mínima.
-    \item \textbf{ENSO:} Correlación significativa con índices ENSO, indicando influencia de fenómenos globales.
+    \item \textbf{Precipitation vs. Temperature:} Negative correlation, consistent with tropical climate patterns.
+    \item \textbf{Temperatures among themselves:} Strong positive correlations between average, maximum, and minimum temperatures.
+    \item \textbf{ENSO:} Significant correlation with ENSO indices, indicating influence of global phenomena.
 \end{enumerate}
 
-\subsubsection{Ubicación Geográfica}
+\subsubsection{Geographic Location}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{DonBosco_Climate/plots/ubicacion_panama.png}
-\caption{Mapa de ubicación geográfica de Don Bosco, Villas de Andalucía, Panamá. El mapa muestra la posición exacta del área de estudio (marcada con un punto rojo) en el contexto geográfico de Panamá y Centroamérica. Las coordenadas son 8.9824°N, 79.5199°W. Esta ubicación se encuentra en la vertiente del Pacífico de Panamá, en la zona metropolitana de la Ciudad de Panamá. La posición geográfica es relevante porque la vertiente del Pacífico generalmente recibe menos precipitación que la vertiente del Caribe debido a efectos orográficos y patrones de viento. Además, la ubicación en una zona urbana densa es importante para entender los efectos de urbanización en el clima local.}
+\caption{Geographic location map of Don Bosco, Villas de Andalucía, Panama. The map shows the exact position of the study area (marked with a red point) in the geographic context of Panama and Central America. Coordinates are 8.9824°N, 79.5199°W. This location is on the Pacific slope of Panama, in the metropolitan area of Panama City. Geographic position is relevant because the Pacific slope generally receives less precipitation than the Caribbean slope due to orographic effects and wind patterns. Additionally, location in a dense urban zone is important for understanding urbanization effects on local climate.}
 \label{fig:location}
 \end{figure}
 
-La Figura \ref{fig:location} contextualiza geográficamente el estudio:
+Figure \ref{fig:location} geographically contextualizes the study:
 
 \begin{itemize}
-    \item \textbf{Ubicación en Panamá:} Zona metropolitana de Ciudad de Panamá.
-    \item \textbf{Vertiente del Pacífico:} Explicación de patrones de precipitación relativamente menores.
-    \item \textbf{Contexto urbano:} Área densamente urbanizada, relevante para efectos de isla de calor.
-    \item \textbf{Elevación:} Baja elevación (30-50 m), sin efectos orográficos significativos.
+    \item \textbf{Location in Panama:} Metropolitan area of Panama City.
+    \item \textbf{Pacific slope:} Explanation of relatively lower precipitation patterns.
+    \item \textbf{Urban context:} Densely urbanized area, relevant for heat island effects.
+    \item \textbf{Elevation:} Low elevation (30-50 m), without significant orographic effects.
 \end{itemize}
 
-\subsection{Análisis de Sequías}
+\subsection{Drought Analysis}
 
-El análisis de detección de sequías identificó múltiples períodos de sequía durante el período de estudio. Los resultados muestran:
+Drought detection analysis identified multiple drought periods during the study period. Results show:
 
 \begin{itemize}
-    \item \textbf{Frecuencia:} Número total de meses en sequía y porcentaje del período total.
-    \item \textbf{Duración:} Períodos consecutivos de sequía, algunos extendiéndose varios meses.
-    \item \textbf{Intensidad:} Magnitud de la desviación del promedio histórico durante sequías.
-    \item \textbf{Tendencias:} Aumento en frecuencia de sequías en años recientes.
+    \item \textbf{Frequency:} Total number of drought months and percentage of total period.
+    \item \textbf{Duration:} Consecutive drought periods, some extending several months.
+    \item \textbf{Intensity:} Magnitude of deviation from historical average during droughts.
+    \item \textbf{Trends:} Increase in drought frequency in recent years.
 \end{itemize}
 
-\subsection{Correlación con Fenómenos Globales}
+\subsection{Correlation with Global Phenomena}
 
-El análisis de correlación con índices ENSO revela:
+Correlation analysis with ENSO indices reveals:
 
 \begin{itemize}
-    \item \textbf{Correlación ONI:} Coeficiente de correlación de Pearson significativo.
-    \item \textbf{Significancia:} Valor p indicando significancia estadística.
-    \item \textbf{Interpretación:} Durante eventos de El Niño (ONI positivo), la precipitación tiende a reducirse, mientras que La Niña (ONI negativo) está asociada con mayor precipitación.
+    \item \textbf{ONI correlation:} Significant Pearson correlation coefficient.
+    \item \textbf{Significance:} p-value indicating statistical significance.
+    \item \textbf{Interpretation:} During El Niño events (positive ONI), precipitation tends to decrease, while La Niña (negative ONI) is associated with increased precipitation.
 \end{itemize}
 
 % ============================================
 % DISCUSSION
 % ============================================
-\section{Discusión}
+\section{Discussion}
 \label{sec:discussion}
 
-\subsection{Factores que Explican la Reducción de Precipitación}
+\subsection{Factors Explaining Precipitation Reduction}
 
-Basado en el análisis de datos y la revisión de literatura, se identifican múltiples factores que explican por qué Don Bosco, Villas de Andalucía, recibe menos precipitación comparada con otras regiones y muestra una tendencia de reducción:
+Based on data analysis and literature review, multiple factors are identified that explain why Don Bosco, Villas de Andalucía, receives less precipitation compared to other regions and shows a reduction trend:
 
-\subsubsection{1. Efecto de Isla de Calor Urbana (UHI)}
+\subsubsection{1. Urban Heat Island Effect (UHI)}
 
-La urbanización acelerada en Don Bosco ha creado condiciones que favorecen el efecto de isla de calor urbana:
-
-\begin{enumerate}
-    \item \textbf{Superficies impermeables:} El aumento de pavimentación y construcción reduce la capacidad de la superficie para absorber y retener agua, disminuyendo la evapotranspiración local.
-    
-    \item \textbf{Absorción de radiación:} Materiales de construcción (concreto, asfalto) tienen mayor capacidad de absorción de radiación solar que la vegetación, elevando las temperaturas locales.
-    
-    \item \textbf{Reducción de vegetación:} La pérdida de árboles y áreas verdes elimina una fuente importante de evapotranspiración, reduciendo la humedad disponible en la atmósfera local.
-    
-    \item \textbf{Emisión de calor antropogénico:} Actividades humanas (tráfico, aire acondicionado, industria) generan calor adicional que contribuye al calentamiento local.
-\end{enumerate}
-
-\textbf{Mecanismo físico:} El calentamiento urbano puede crear una "cúpula" de alta presión local que inhibe la formación de nubes y la precipitación. Además, el aire más cálido puede "absorber" más humedad antes de alcanzar el punto de saturación necesario para la formación de precipitación.
-
-\subsubsection{2. Cambio en la Rugosidad Superficial}
-
-La urbanización altera significativamente la rugosidad de la superficie:
-
-\begin{itemize}
-    \item \textbf{Edificios altos:} Crean obstáculos que alteran los patrones de viento.
-    \item \textbf{Reducción de convergencia:} La alteración de vientos puede reducir la convergencia de masas de aire necesaria para la formación de precipitación convectiva.
-    \item \textbf{Cambio en circulación local:} Los edificios pueden crear "sombras de lluvia" donde la precipitación se reduce.
-\end{itemize}
-
-\subsubsection{3. Reducción de Evapotranspiración}
-
-La pérdida de vegetación tiene un impacto directo:
-
-\begin{itemize}
-    \item \textbf{Menos humedad atmosférica local:} Sin evapotranspiración de plantas, hay menos vapor de agua disponible para formar nubes y precipitación.
-    \item \textbf{Ciclo hidrológico alterado:} El ciclo local de agua se interrumpe cuando la vegetación es reemplazada por superficies impermeables.
-    \item \textbf{Reducción de núcleos de condensación:} Algunas plantas emiten partículas que actúan como núcleos de condensación de nubes (CCN), facilitando la formación de precipitación.
-\end{itemize}
-
-\subsubsection{4. Influencia de Fenómenos Climáticos Globales}
-
-El análisis de correlación muestra una influencia significativa de ENSO:
-
-\begin{itemize}
-    \item \textbf{Frecuencia de El Niño:} Si la frecuencia o intensidad de eventos de El Niño ha aumentado, esto explicaría períodos de sequía más frecuentes.
-    \item \textbf{Interacción con cambio climático:} El cambio climático puede estar alterando los patrones de ENSO, afectando la precipitación en Panamá.
-    \item \textbf{Variabilidad aumentada:} Mayor variabilidad en eventos ENSO puede llevar a períodos más extremos de sequía y lluvia.
-\end{itemize}
-
-\subsubsection{5. Cambio Climático Global}
-
-Factores globales también contribuyen:
+Accelerated urbanization in Don Bosco has created conditions that favor the urban heat island effect:
 
 \begin{enumerate}
-    \item \textbf{Alteración de patrones de circulación:} El cambio climático está alterando los patrones de circulación atmosférica global, afectando cómo y dónde se forma la precipitación.
+    \item \textbf{Impermeable surfaces:} Increased pavement and construction reduces the surface's capacity to absorb and retain water, decreasing local evapotranspiration.
     
-    \item \textbf{Expansión de la zona de convergencia intertropical (ITCZ):} Cambios en la posición y fuerza de la ITCZ pueden afectar la precipitación en Panamá.
+    \item \textbf{Radiation absorption:} Construction materials (concrete, asphalt) have greater solar radiation absorption capacity than vegetation, raising local temperatures.
     
-    \item \textbf{Aumento de temperatura global:} Temperaturas más altas pueden aumentar la capacidad del aire para retener humedad, pero también pueden alterar los patrones de formación de nubes.
+    \item \textbf{Vegetation reduction:} Loss of trees and green areas eliminates an important source of evapotranspiration, reducing available humidity in the local atmosphere.
     
-    \item \textbf{Cambios en patrones de viento:} Alteraciones en los vientos alisios pueden afectar la precipitación en la vertiente del Pacífico.
+    \item \textbf{Anthropogenic heat emission:} Human activities (traffic, air conditioning, industry) generate additional heat that contributes to local warming.
 \end{enumerate}
 
-\subsubsection{6. Factores Geográficos y Orográficos}
+\textbf{Physical mechanism:} Urban warming can create a local high-pressure "dome" that inhibits cloud formation and precipitation. Additionally, warmer air can "absorb" more moisture before reaching the saturation point necessary for precipitation formation.
 
-La ubicación específica también juega un papel:
+\subsubsection{2. Change in Surface Roughness}
+
+Urbanization significantly alters surface roughness:
 
 \begin{itemize}
-    \item \textbf{Vertiente del Pacífico:} Don Bosco está en la vertiente del Pacífico, que típicamente recibe menos precipitación que la vertiente del Caribe debido a efectos orográficos.
-    
-    \item \textbf{Sombra de lluvia:} Aunque la elevación es baja, la posición relativa a sistemas montañosos puede crear efectos de sombra de lluvia.
-    
-    \item \textbf{Distancia al océano:} La distancia y dirección relativa a las fuentes de humedad (océanos) afecta la disponibilidad de vapor de agua.
+    \item \textbf{Tall buildings:} Create obstacles that alter wind patterns.
+    \item \textbf{Reduced convergence:} Wind alteration can reduce air mass convergence necessary for convective precipitation formation.
+    \item \textbf{Change in local circulation:} Buildings can create "rain shadows" where precipitation is reduced.
 \end{itemize}
 
-\subsection{Sinergia de Factores}
+\subsubsection{3. Reduced Evapotranspiration}
 
-Es importante notar que estos factores no actúan de manera aislada, sino que interactúan sinérgicamente:
-
-\begin{enumerate}
-    \item \textbf{Amplificación:} El efecto UHI puede amplificar los efectos del cambio climático global, y viceversa.
-    
-    \item \textbf{Retroalimentación positiva:} Menos precipitación $\rightarrow$ menos vegetación $\rightarrow$ más calentamiento $\rightarrow$ menos precipitación.
-    
-    \item \textbf{Eventos extremos:} La combinación de factores puede hacer que eventos extremos (sequías) sean más frecuentes e intensos.
-\end{enumerate}
-
-\subsection{Comparación con Otras Regiones}
-
-La reducción observada en Don Bosco es más pronunciada que en otras regiones de Panamá debido a:
+Vegetation loss has a direct impact:
 
 \begin{itemize}
-    \item \textbf{Mayor grado de urbanización:} Comparado con áreas rurales o semi-rurales.
-    \item \textbf{Ubicación específica:} Combinación de factores geográficos y urbanos.
-    \item \textbf{Tiempo de desarrollo:} La urbanización acelerada en las últimas décadas coincide con el período de observación de reducción.
+    \item \textbf{Less local atmospheric moisture:} Without plant evapotranspiration, there is less water vapor available to form clouds and precipitation.
+    \item \textbf{Altered hydrological cycle:} The local water cycle is interrupted when vegetation is replaced by impermeable surfaces.
+    \item \textbf{Reduced condensation nuclei:} Some plants emit particles that act as cloud condensation nuclei (CCN), facilitating precipitation formation.
 \end{itemize}
 
-\subsection{Limitaciones del Estudio}
+\subsubsection{4. Influence of Global Climate Phenomena}
 
-Es importante reconocer las limitaciones:
-
-\begin{enumerate}
-    \item \textbf{Datos:} Dependencia de datos de estaciones meteorológicas que pueden no capturar completamente la variabilidad espacial.
-    
-    \item \textbf{Período de estudio:} 25 años es relativamente corto para establecer tendencias climáticas definitivas, aunque suficiente para identificar patrones.
-    
-    \item \textbf{Factores no medidos:} Algunos factores (aerosoles, cambios en uso de suelo específicos) no están completamente cuantificados.
-    
-    \item \textbf{Correlación vs. causalidad:} Las correlaciones identificadas no prueban causalidad directa, aunque los mecanismos físicos son consistentes.
-\end{enumerate}
-
-\subsection{Implicaciones}
-
-Los hallazgos tienen varias implicaciones importantes:
+Correlation analysis shows significant ENSO influence:
 
 \begin{itemize}
-    \item \textbf{Recursos hídricos:} La reducción de precipitación afecta la disponibilidad de agua, requiriendo mejor gestión.
+    \item \textbf{El Niño frequency:} If the frequency or intensity of El Niño events has increased, this would explain more frequent drought periods.
+    \item \textbf{Interaction with climate change:} Climate change may be altering ENSO patterns, affecting precipitation in Panama.
+    \item \textbf{Increased variability:} Greater variability in ENSO events can lead to more extreme periods of drought and rain.
+\end{itemize}
+
+\subsubsection{5. Global Climate Change}
+
+Global factors also contribute:
+
+\begin{enumerate}
+    \item \textbf{Alteration of circulation patterns:} Climate change is altering global atmospheric circulation patterns, affecting how and where precipitation forms.
     
-    \item \textbf{Planificación urbana:} Necesidad de incorporar consideraciones climáticas en el desarrollo urbano.
+    \item \textbf{Expansion of the Intertropical Convergence Zone (ITCZ):} Changes in ITCZ position and strength can affect precipitation in Panama.
     
-    \item \textbf{Adaptación:} Estrategias de adaptación necesarias para enfrentar cambios en patrones de precipitación.
+    \item \textbf{Global temperature increase:} Higher temperatures can increase the air's capacity to retain moisture, but can also alter cloud formation patterns.
     
-    \item \textbf{Investigación futura:} Necesidad de estudios más detallados sobre mecanismos específicos y proyecciones futuras.
+    \item \textbf{Changes in wind patterns:} Alterations in trade winds can affect precipitation on the Pacific slope.
+\end{enumerate}
+
+\subsubsection{6. Geographic and Orographic Factors}
+
+The specific location also plays a role:
+
+\begin{itemize}
+    \item \textbf{Pacific slope:} Don Bosco is on the Pacific slope, which typically receives less precipitation than the Caribbean slope due to orographic effects.
+    
+    \item \textbf{Rain shadow:} Although elevation is low, relative position to mountain systems can create rain shadow effects.
+    
+    \item \textbf{Distance to ocean:} Distance and relative direction to moisture sources (oceans) affects water vapor availability.
+\end{itemize}
+
+\subsection{Synergy of Factors}
+
+It is important to note that these factors do not act in isolation, but interact synergistically:
+
+\begin{enumerate}
+    \item \textbf{Amplification:} The UHI effect can amplify the effects of global climate change, and vice versa.
+    
+    \item \textbf{Positive feedback:} Less precipitation $\rightarrow$ less vegetation $\rightarrow$ more warming $\rightarrow$ less precipitation.
+    
+    \item \textbf{Extreme events:} The combination of factors can make extreme events (droughts) more frequent and intense.
+\end{enumerate}
+
+\subsection{Comparison with Other Regions}
+
+The reduction observed in Don Bosco is more pronounced than in other regions of Panama due to:
+
+\begin{itemize}
+    \item \textbf{Higher degree of urbanization:} Compared to rural or semi-rural areas.
+    \item \textbf{Specific location:} Combination of geographic and urban factors.
+    \item \textbf{Development timing:} Accelerated urbanization in recent decades coincides with the period of observed reduction.
+\end{itemize}
+
+\subsection{Study Limitations}
+
+It is important to recognize the limitations:
+
+\begin{enumerate}
+    \item \textbf{Data:} Dependence on weather station data that may not fully capture spatial variability.
+    
+    \item \textbf{Study period:} 25 years is relatively short to establish definitive climate trends, although sufficient to identify patterns.
+    
+    \item \textbf{Unmeasured factors:} Some factors (aerosols, specific land use changes) are not fully quantified.
+    
+    \item \textbf{Correlation vs. causality:} Identified correlations do not prove direct causality, although physical mechanisms are consistent.
+\end{enumerate}
+
+\subsection{Implications}
+
+Findings have several important implications:
+
+\begin{itemize}
+    \item \textbf{Water resources:} Precipitation reduction affects water availability, requiring better management.
+    
+    \item \textbf{Urban planning:} Need to incorporate climate considerations in urban development.
+    
+    \item \textbf{Adaptation:} Adaptation strategies necessary to face changes in precipitation patterns.
+    
+    \item \textbf{Future research:} Need for more detailed studies on specific mechanisms and future projections.
 \end{itemize}
 
 % ============================================
 % CONCLUSIONS
 % ============================================
-\section{Conclusiones}
+\section{Conclusions}
 \label{sec:conclusions}
 
-\subsection{Conclusiones Principales}
+\subsection{Main Conclusions}
 
-Basado en el análisis exhaustivo de datos climáticos para el período 2000-2025, se pueden extraer las siguientes conclusiones principales:
+Based on comprehensive analysis of climate data for the period 2000-2025, the following main conclusions can be drawn:
 
 \begin{enumerate}
-    \item \textbf{Tendencia de reducción confirmada:} Existe una tendencia estadísticamente significativa de reducción en la precipitación mensual en Don Bosco, Villas de Andalucía, durante el período de estudio. Esta tendencia es consistente con observaciones globales y regionales de cambios en patrones de precipitación.
+    \item \textbf{Confirmed reduction trend:} There is a statistically significant trend of reduction in monthly precipitation in Don Bosco, Villas de Andalucía, during the study period. This trend is consistent with global and regional observations of changes in precipitation patterns.
     
-    \item \textbf{Factores múltiples:} La reducción de precipitación no puede atribuirse a un solo factor, sino que resulta de la interacción de múltiples factores, incluyendo:
+    \item \textbf{Multiple factors:} Precipitation reduction cannot be attributed to a single factor, but results from the interaction of multiple factors, including:
     \begin{itemize}
-        \item Efecto de isla de calor urbana debido a la urbanización acelerada
-        \item Reducción de evapotranspiración por pérdida de vegetación
-        \item Influencia de fenómenos climáticos globales (ENSO)
-        \item Cambio climático global
-        \item Factores geográficos específicos de la ubicación
+        \item Urban heat island effect due to accelerated urbanization
+        \item Reduced evapotranspiration due to vegetation loss
+        \item Influence of global climate phenomena (ENSO)
+        \item Global climate change
+        \item Geographic factors specific to the location
     \end{itemize}
     
-    \item \textbf{Correlación con ENSO:} Se identificó una correlación significativa entre la precipitación local y los índices ENSO (ONI), confirmando la influencia de fenómenos climáticos globales en los patrones locales de precipitación.
+    \item \textbf{Correlation with ENSO:} A significant correlation was identified between local precipitation and ENSO indices (ONI), confirming the influence of global climate phenomena on local precipitation patterns.
     
-    \item \textbf{Aumento de sequías:} El análisis de detección de sequías revela un aumento en la frecuencia de períodos de sequía, particularmente en la segunda mitad del período de estudio (después de 2010).
+    \item \textbf{Increased droughts:} Drought detection analysis reveals an increase in the frequency of drought periods, particularly in the second half of the study period (after 2010).
     
-    \item \textbf{Variabilidad aumentada:} Además de la reducción en la precipitación promedio, se observa un aumento en la variabilidad interanual, sugiriendo mayor inestabilidad en los patrones climáticos.
+    \item \textbf{Increased variability:} In addition to reduction in average precipitation, an increase in interannual variability is observed, suggesting greater instability in climate patterns.
     
-    \item \textbf{Anomalías más frecuentes:} El análisis de anomalías muestra un aumento en la frecuencia de anomalías negativas (sequías) comparado con anomalías positivas, particularmente en años recientes.
+    \item \textbf{More frequent anomalies:} Anomaly analysis shows an increase in the frequency of negative anomalies (droughts) compared to positive anomalies, particularly in recent years.
 \end{enumerate}
 
-\subsection{Explicación Científica}
+\subsection{Scientific Explanation}
 
-La reducción de precipitación en Don Bosco, Villas de Andalucía, puede explicarse mediante los siguientes mecanismos físicos interconectados:
+The reduction in precipitation in Don Bosco, Villas de Andalucía, can be explained through the following interconnected physical mechanisms:
 
 \begin{enumerate}
-    \item \textbf{Mecanismo de isla de calor:} La urbanización ha creado condiciones de calentamiento local que pueden inhibir la formación de precipitación mediante:
+    \item \textbf{Heat island mechanism:} Urbanization has created local warming conditions that can inhibit precipitation formation through:
     \begin{itemize}
-        \item Creación de una cúpula de alta presión local
-        \item Reducción de la humedad relativa debido a mayor capacidad del aire caliente para retener vapor
-        \item Alteración de patrones de circulación local
+        \item Creation of a local high-pressure dome
+        \item Reduction in relative humidity due to greater capacity of hot air to retain vapor
+        \item Alteration of local circulation patterns
     \end{itemize}
     
-    \item \textbf{Reducción de humedad local:} La pérdida de vegetación reduce la evapotranspiración, disminuyendo la cantidad de vapor de agua disponible localmente para la formación de nubes y precipitación.
+    \item \textbf{Reduced local humidity:} Vegetation loss reduces evapotranspiration, decreasing the amount of water vapor available locally for cloud and precipitation formation.
     
-    \item \textbf{Alteración de convergencia:} Los cambios en la rugosidad superficial (edificios) alteran los patrones de viento, potencialmente reduciendo la convergencia de masas de aire necesaria para la precipitación convectiva.
+    \item \textbf{Convergence alteration:} Changes in surface roughness (buildings) alter wind patterns, potentially reducing air mass convergence necessary for convective precipitation.
     
-    \item \textbf{Influencia global:} Los cambios en patrones climáticos globales, incluyendo variaciones en ENSO y el cambio climático antropogénico, contribuyen a las tendencias observadas localmente.
+    \item \textbf{Global influence:} Changes in global climate patterns, including variations in ENSO and anthropogenic climate change, contribute to locally observed trends.
     
-    \item \textbf{Sinergia:} Estos factores interactúan de manera sinérgica, creando un efecto amplificado que resulta en la reducción observada de precipitación.
+    \item \textbf{Synergy:} These factors interact synergistically, creating an amplified effect that results in the observed precipitation reduction.
 \end{enumerate}
 
-\subsection{Recomendaciones}
+\subsection{Recommendations}
 
-Basado en los hallazgos de este estudio, se hacen las siguientes recomendaciones:
+Based on the findings of this study, the following recommendations are made:
 
-\subsubsection{Recomendaciones para Gestión de Recursos Hídricos}
+\subsubsection{Recommendations for Water Resource Management}
 
 \begin{enumerate}
-    \item \textbf{Diversificación de fuentes:} Desarrollar fuentes alternativas de agua para compensar la reducción en precipitación.
+    \item \textbf{Source diversification:} Develop alternative water sources to compensate for precipitation reduction.
     
-    \item \textbf{Almacenamiento mejorado:} Mejorar sistemas de captación y almacenamiento de agua de lluvia.
+    \item \textbf{Improved storage:} Improve rainwater collection and storage systems.
     
-    \item \textbf{Conservación:} Implementar programas de conservación y uso eficiente del agua.
+    \item \textbf{Conservation:} Implement water conservation and efficient use programs.
     
-    \item \textbf{Monitoreo:} Establecer sistemas de monitoreo continuo de recursos hídricos y patrones de precipitación.
+    \item \textbf{Monitoring:} Establish continuous monitoring systems for water resources and precipitation patterns.
 \end{enumerate}
 
-\subsubsection{Recomendaciones para Planificación Urbana}
+\subsubsection{Recommendations for Urban Planning}
 
 \begin{enumerate}
-    \item \textbf{Infraestructura verde:} Incorporar infraestructura verde (parques, techos verdes, áreas de infiltración) para mitigar efectos de isla de calor y aumentar evapotranspiración.
+    \item \textbf{Green infrastructure:} Incorporate green infrastructure (parks, green roofs, infiltration areas) to mitigate heat island effects and increase evapotranspiration.
     
-    \item \textbf{Espacios verdes:} Aumentar y preservar espacios verdes y vegetación urbana.
+    \item \textbf{Green spaces:} Increase and preserve green spaces and urban vegetation.
     
-    \item \textbf{Superficies permeables:} Utilizar materiales permeables en construcción para permitir infiltración y reducir escorrentía.
+    \item \textbf{Permeable surfaces:} Use permeable materials in construction to allow infiltration and reduce runoff.
     
-    \item \textbf{Planificación climática:} Incorporar consideraciones climáticas en planes de desarrollo urbano.
+    \item \textbf{Climate planning:} Incorporate climate considerations in urban development plans.
 \end{enumerate}
 
-\subsubsection{Recomendaciones para Investigación Futura}
+\subsubsection{Recommendations for Future Research}
 
 \begin{enumerate}
-    \item \textbf{Modelos climáticos:} Desarrollar modelos climáticos regionales de alta resolución para proyecciones futuras.
+    \item \textbf{Climate models:} Develop high-resolution regional climate models for future projections.
     
-    \item \textbf{Mediciones detalladas:} Establecer redes de medición más densas para capturar variabilidad espacial.
+    \item \textbf{Detailed measurements:} Establish denser measurement networks to capture spatial variability.
     
-    \item \textbf{Estudios de mecanismos:} Investigar en detalle los mecanismos físicos específicos mediante modelado numérico.
+    \item \textbf{Mechanism studies:} Investigate in detail specific physical mechanisms through numerical modeling.
     
-    \item \textbf{Comparación regional:} Realizar estudios comparativos con otras áreas urbanas de Panamá y la región.
+    \item \textbf{Regional comparison:} Conduct comparative studies with other urban areas of Panama and the region.
     
-    \item \textbf{Proyecciones:} Desarrollar proyecciones de precipitación futura bajo diferentes escenarios de cambio climático y desarrollo urbano.
+    \item \textbf{Projections:} Develop future precipitation projections under different climate change and urban development scenarios.
 \end{enumerate}
 
-\subsubsection{Recomendaciones para Política Pública}
+\subsubsection{Recommendations for Public Policy}
 
 \begin{enumerate}
-    \item \textbf{Regulación urbana:} Desarrollar regulaciones que requieran incorporación de infraestructura verde en nuevos desarrollos.
+    \item \textbf{Urban regulation:} Develop regulations requiring incorporation of green infrastructure in new developments.
     
-    \item \textbf{Conservación de vegetación:} Establecer políticas para proteger y aumentar la vegetación urbana.
+    \item \textbf{Vegetation conservation:} Establish policies to protect and increase urban vegetation.
     
-    \item \textbf{Adaptación climática:} Desarrollar planes de adaptación al cambio climático a nivel local y regional.
+    \item \textbf{Climate adaptation:} Develop climate change adaptation plans at local and regional levels.
     
-    \item \textbf{Educación:} Implementar programas de educación sobre cambio climático y gestión de recursos hídricos.
+    \item \textbf{Education:} Implement education programs on climate change and water resource management.
 \end{enumerate}
 
-\subsection{Contribuciones del Estudio}
+\subsection{Study Contributions}
 
-Este estudio contribuye al conocimiento científico en varios aspectos:
+This study contributes to scientific knowledge in several aspects:
 
 \begin{enumerate}
-    \item \textbf{Datos:} Proporciona un análisis cuantitativo detallado de patrones de precipitación en un área específica de Panamá.
+    \item \textbf{Data:} Provides detailed quantitative analysis of precipitation patterns in a specific area of Panama.
     
-    \item \textbf{Metodología:} Demuestra la aplicación de métodos estadísticos avanzados para análisis climático.
+    \item \textbf{Methodology:} Demonstrates application of advanced statistical methods for climate analysis.
     
-    \item \textbf{Comprensión:} Aumenta la comprensión de cómo factores locales (urbanización) y globales (cambio climático, ENSO) interactúan para afectar patrones climáticos.
+    \item \textbf{Understanding:} Increases understanding of how local factors (urbanization) and global factors (climate change, ENSO) interact to affect climate patterns.
     
-    \item \textbf{Visualización:} Proporciona visualizaciones de alta calidad que facilitan la comprensión de patrones complejos.
+    \item \textbf{Visualization:} Provides high-quality visualizations that facilitate understanding of complex patterns.
     
-    \item \textbf{Base para futuros estudios:} Establece una base de datos y metodología para estudios futuros y comparaciones.
+    \item \textbf{Base for future studies:} Establishes a database and methodology for future studies and comparisons.
 \end{enumerate}
 
-\subsection{Consideraciones Finales}
+\subsection{Final Considerations}
 
-La reducción de precipitación observada en Don Bosco, Villas de Andalucía, es un fenómeno complejo resultado de la interacción de múltiples factores. Comprender estos factores y sus interacciones es crucial para:
+The observed precipitation reduction in Don Bosco, Villas de Andalucía, is a complex phenomenon resulting from the interaction of multiple factors. Understanding these factors and their interactions is crucial for:
 
 \begin{itemize}
-    \item Desarrollar estrategias efectivas de adaptación
-    \item Planificar el desarrollo urbano sostenible
-    \item Gestionar recursos hídricos de manera eficiente
-    \item Mitigar impactos negativos del cambio climático
+    \item Developing effective adaptation strategies
+    \item Planning sustainable urban development
+    \item Managing water resources efficiently
+    \item Mitigating negative impacts of climate change
 \end{itemize}
 
-Este estudio proporciona evidencia cuantitativa y cualitativa que puede informar decisiones de política pública, planificación urbana y gestión de recursos. Sin embargo, se requiere investigación continua para refinar la comprensión de los mecanismos específicos y desarrollar proyecciones confiables para el futuro.
+This study provides quantitative and qualitative evidence that can inform public policy decisions, urban planning, and resource management. However, continuous research is required to refine understanding of specific mechanisms and develop reliable projections for the future.
 
 % ============================================
 % REFERENCES
 % ============================================
-\section{Referencias}
+\section{References}
 \label{sec:references}
 
 \begin{thebibliography}{99}
 
 \bibitem{noaa_enso}
-NOAA Climate Prediction Center. (2025). \textit{El Niño/Southern Oscillation (ENSO) Diagnostic Discussion}. National Oceanic and Atmospheric Administration. Disponible en: \url{https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_change.shtml}
+NOAA Climate Prediction Center. (2025). \textit{El Niño/Southern Oscillation (ENSO) Diagnostic Discussion}. National Oceanic and Atmospheric Administration. Available at: \url{https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_change.shtml}
 
 \bibitem{urban_precipitation}
 Shepherd, J. M. (2005). A review of current investigations of urban-induced rainfall and recommendations for the future. \textit{Earth Interactions}, 9(12), 1-27.
@@ -882,13 +882,13 @@ Cleveland, R. B., Cleveland, W. S., McRae, J. E., \& Terpenning, I. (1990). STL:
 Pearson, K. (1896). Mathematical contributions to the theory of evolution. III. Regression, heredity, and panmixia. \textit{Philosophical Transactions of the Royal Society of London}, 187, 253-318.
 
 \bibitem{panama_urbanization}
-Heckadon-Moreno, S. (2004). \textit{Panamá: Crecimiento urbano y desarrollo sostenible}. Smithsonian Tropical Research Institute.
+Heckadon-Moreno, S. (2004). \textit{Panamá: Urban Growth and Sustainable Development}. Smithsonian Tropical Research Institute.
 
 \bibitem{climate_data_analysis}
 Kalnay, E., et al. (1996). The NCEP/NCAR 40-year reanalysis project. \textit{Bulletin of the American Meteorological Society}, 77(3), 437-471.
 
 \bibitem{noaa_data}
-NOAA National Centers for Environmental Information. (2025). \textit{Global Summary of the Day (GSOD)}. Disponible en: \url{https://www.ncei.noaa.gov/access/services/data/v1}
+NOAA National Centers for Environmental Information. (2025). \textit{Global Summary of the Day (GSOD)}. Available at: \url{https://www.ncei.noaa.gov/access/services/data/v1}
 
 \bibitem{urban_climate}
 Arnfield, A. J. (2003). Two decades of urban climate research: a review of turbulence, exchanges of energy and water, and the urban heat island. \textit{International Journal of Climatology}, 23(1), 1-26.
@@ -909,7 +909,7 @@ Mann, H. B. (1945). Nonparametric tests against trend. \textit{Econometrica}, 13
 Hawkins, D. M. (1980). \textit{Identification of Outliers}. Chapman and Hall.
 
 \bibitem{panama_water_resources}
-Autoridad del Canal de Panamá. (2020). \textit{Plan Maestro del Agua}. Panamá.
+Panama Canal Authority. (2020). \textit{Water Master Plan}. Panama.
 
 \end{thebibliography}
 
@@ -918,10 +918,10 @@ Autoridad del Canal de Panamá. (2020). \textit{Plan Maestro del Agua}. Panamá.
 % ============================================
 \begin{appendices}
 
-\section{Código Python para Análisis de Datos}
+\section{Python Code for Data Analysis}
 \label{app:code}
 
-\subsection{Script Principal (main.py)}
+\subsection{Main Script (main.py)}
 
 \begin{lstlisting}
 """
@@ -1081,7 +1081,7 @@ if __name__ == "__main__":
         sys.exit(1)
 \end{lstlisting}
 
-\subsection{Configuración (config.py)}
+\subsection{Configuration (config.py)}
 
 \begin{lstlisting}
 """
@@ -1121,32 +1121,31 @@ Z_SCORE_THRESHOLD = 2.5  # Threshold for anomaly detection using Z-Score
 STL_SEASONAL = 12  # Seasonal period for STL decomposition (monthly)
 \end{lstlisting}
 
-\section{Datos Procesados}
+\section{Processed Data}
 \label{app:data}
 
-Los datos procesados están disponibles en formato CSV y Parquet en el directorio \texttt{data/processed/}:
+Processed data are available in CSV and Parquet format in the \texttt{data/processed/} directory:
 
 \begin{itemize}
-    \item \texttt{climate\_data\_daily.csv/parquet}: Datos diarios de precipitación y temperatura
-    \item \texttt{climate\_data\_monthly.csv/parquet}: Datos mensuales agregados
-    \item \texttt{enso\_indices.csv/parquet}: Índices ENSO (ONI) mensuales
+    \item \texttt{climate\_data\_daily.csv/parquet}: Daily precipitation and temperature data
+    \item \texttt{climate\_data\_monthly.csv/parquet}: Aggregated monthly data
+    \item \texttt{enso\_indices.csv/parquet}: Monthly ENSO (ONI) indices
 \end{itemize}
 
-\section{Figuras Generadas}
+\section{Generated Figures}
 \label{app:figures}
 
-Todas las figuras están disponibles en el directorio \texttt{plots/} con resolución de 300 DPI:
+All figures are available in the \texttt{plots/} directory at 300 DPI resolution:
 
 \begin{enumerate}
-    \item \texttt{precipitacion\_temporal.png}: Serie temporal de precipitación mensual
-    \item \texttt{anomalias\_precipitacion.png}: Anomalías de precipitación detectadas
-    \item \texttt{heatmap\_precipitacion\_mensual.png}: Heatmap de precipitación por año y mes
-    \item \texttt{boxplot\_precipitacion\_anual.png}: Distribución anual de precipitación
-    \item \texttt{matriz\_correlacion.png}: Matriz de correlación entre variables climáticas
-    \item \texttt{ubicacion\_panama.png}: Mapa de ubicación geográfica
+    \item \texttt{precipitacion\_temporal.png}: Monthly precipitation time series
+    \item \texttt{anomalias\_precipitacion.png}: Detected precipitation anomalies
+    \item \texttt{heatmap\_precipitacion\_mensual.png}: Precipitation heatmap by year and month
+    \item \texttt{boxplot\_precipitacion\_anual.png}: Annual precipitation distribution
+    \item \texttt{matriz\_correlacion.png}: Correlation matrix between climate variables
+    \item \texttt{ubicacion\_panama.png}: Geographic location map
 \end{enumerate}
 
 \end{appendices}
 
 \end{document}
-
