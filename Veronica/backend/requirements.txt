@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+python-dotenv
+pydantic-settings
+langchain
+langchain-openai
+langchain-anthropic
+crewai
+chromadb
+elevenlabs
+openai
+whisper-timestamped
+websockets
+python-multipart
+httpx
+pytest
+streamlit
