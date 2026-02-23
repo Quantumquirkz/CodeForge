@@ -13,22 +13,78 @@ from app.models.chat import (
     ChatOutboundChunk,
     ChatOutboundEnd,
     ChatOutboundError,
+    ChatOutboundRequiresConfirmation,
 )
 from app.models.voice import VoiceProcessRequest, VoiceProcessResponse
+from app.policy.action_guard import action_guard
+from app.policy.confirmation import handle_confirmation_command
 from app.voice.processor import voice_processor
 
 app = FastAPI(title="Veronica AI Backend")
 
-
 @app.get("/")
 async def root() -> dict[str, str]:
+    """Root endpoint to verify the backend is running."""
     return {"message": "Veronica AI Backend is running."}
 
+async def handle_confirmation(
+    session_id: str, text: str, websocket: WebSocket
+) -> bool:
+    """
+    Handle confirmation commands and send appropriate responses.
+
+    Args:
+        session_id: The session ID.
+        text: The input text from the user.
+        websocket: The WebSocket connection.
+
+    Returns:
+        bool: True if the command was handled, False otherwise.
+    """
+    handled, confirmation_response = handle_confirmation_command(
+        session_id, text, session_store=session_store, action_guard=action_guard
+    )
+    if handled:
+        await websocket.send_text(
+            ChatOutboundChunk(text=confirmation_response).model_dump_json()
+        )
+        session_store.append_turn(session_id, text, confirmation_response)
+        await websocket.send_text(ChatOutboundEnd().model_dump_json())
+        return True
+    return False
+
+async def handle_policy_check(
+    session_id: str, text: str, websocket: WebSocket
+) -> bool:
+    """
+    Evaluate policy for the input text and handle confirmation if required.
+
+    Args:
+        session_id: The session ID.
+        text: The input text from the user.
+        websocket: The WebSocket connection.
+
+    Returns:
+        bool: True if the policy requires confirmation, False otherwise.
+    """
+    policy_result = action_guard.evaluate(text)
+    if policy_result.requires_confirmation and policy_result.pending_action:
+        session_store.set_pending_action(session_id, policy_result.pending_action)
+        await websocket.send_text(
+            ChatOutboundRequiresConfirmation(
+                action_id=policy_result.pending_action.action_id,
+                message=policy_result.response_message,
+            ).model_dump_json()
+        )
+        session_store.append_turn(session_id, text, policy_result.response_message)
+        await websocket.send_text(ChatOutboundEnd().model_dump_json())
+        return True
+    return False
 
 @app.websocket("/ws/chat")
 async def websocket_chat(websocket: WebSocket) -> None:
+    """WebSocket endpoint for handling chat interactions."""
     await websocket.accept()
-
     session_id = websocket.query_params.get("session_id") or str(uuid4())
 
     try:
@@ -42,6 +98,15 @@ async def websocket_chat(websocket: WebSocket) -> None:
                 await websocket.send_text(error_payload.model_dump_json())
                 continue
 
+            # Handle confirmation commands
+            if await handle_confirmation(session_id, payload.text, websocket):
+                continue
+
+            # Check policy and handle confirmation if required
+            if await handle_policy_check(session_id, payload.text, websocket):
+                continue
+
+            # Process the chat message
             history = session_store.get_history(session_id)
             full_response = ""
 
@@ -54,12 +119,22 @@ async def websocket_chat(websocket: WebSocket) -> None:
             await websocket.send_text(ChatOutboundEnd().model_dump_json())
 
     except WebSocketDisconnect:
-        return
-
+        print(f"WebSocket disconnected for session: {session_id}")
 
 @app.post("/voice/process", response_model=VoiceProcessResponse)
 async def process_voice(request: VoiceProcessRequest) -> VoiceProcessResponse:
-    """Process voice input and return both text and synthesized audio."""
+    """
+    Process voice input and return both text and synthesized audio.
+
+    Args:
+        request: The voice process request containing the audio file path.
+
+    Returns:
+        VoiceProcessResponse: The response containing user text, response text, and audio response.
+    """
+    if not request.audio_file_path:
+        raise HTTPException(status_code=400, detail="Audio file path is required.")
+
     text = voice_processor.transcribe_audio(request.audio_file_path)
     if not text:
         raise HTTPException(status_code=400, detail="Audio transcription failed.")
