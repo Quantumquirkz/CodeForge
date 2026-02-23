@@ -51,7 +51,7 @@ WhatsappBot/
 │   └── whatsapp_bot/
 │       ├── app/                     # Entrypoints (Flask/FastAPI), wiring
 │       ├── domain/                  # Entidades y lógica de negocio pura
-│       ├── services/                # Casos de uso / orquestación
+│       ├── use_cases/               # Casos de uso / orquestación
 │       ├── integrations/            # Groq, Twilio, WhatsApp providers
 │       ├── prompts/                 # Plantillas de prompts
 │       ├── infrastructure/          # Config, logging, almacenamiento

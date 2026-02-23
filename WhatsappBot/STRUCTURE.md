@@ -44,7 +44,7 @@ WhatsappBot/
 │       │   ├── services/
 │       │   │   ├── language_detector.py
 │       │   │   ├── message_classifier.py
-│       │   │   └── context_manager.py
+│       │   │   └── context_manager.py       # (pendiente)
 │       │   └── ports/
 │       │       ├── llm_port.py             # Contrato para proveedor LLM
 │       │       └── messaging_port.py       # Contrato para proveedor WA
@@ -65,8 +65,11 @@ WhatsappBot/
 │       │   │   └── env.py
 │       │   ├── logging/
 │       │   │   └── logger.py
+│       │   ├── security/
+│       │   │   └── request_verifier.py
 │       │   └── storage/
-│       │       └── in_memory_context_store.py
+│       │       ├── in_memory_context_store.py
+│       │       └── in_memory_rate_limiter.py
 │       └── shared/
 │           ├── exceptions.py
 │           └── types.py
