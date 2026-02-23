@@ -52,9 +52,12 @@ A standard interface for tools has been established using the `@tool` decorator,
 The system prompt for Veronica has been carefully crafted to define her personality, with instructions for empathy, proactivity, and politeness. Temperature and parameter tuning in the orchestrator ensure that the agent's responses are appropriate and contextually relevant, providing a more engaging and personalized user experience.
 - [x] Empathetic prompt design.
 
-## 12. Basic User Interface (Frontend)
-A simple chat interface has been developed with text input and response display capabilities. Placeholders for voice and vision interactions have been included to prepare for future enhancements. The frontend communicates with the backend via WebSocket, ensuring real-time updates and a seamless user experience.
-- [x] Streamlit Chat UI.
+## 12. Next.js User Interface (Frontend - Phase 3)
+A premium, modern chat interface has been developed using **Next.js 14** and **Vanilla CSS**. The design features glassmorphism, dark mode by default, and smooth micro-animations. It communicates with the backend via a custom WebSocket hook that supports real-time token streaming.
+- [x] Next.js project structure manually initialized.
+- [x] Glassmorphism Chat UI with Vanilla CSS modules.
+- [x] `useWebSocket` hook with real-time streaming support.
+- [x] Modern typography and responsive layout.
 
 ## 13. Unit & Integration Tests
 Basic test scripts (`test_veronica.py`) have been created to ensure the reliability and functionality of the system. Mocks for external services, such as ElevenLabs key checks, are in place to facilitate testing without dependencies on external APIs. Plans include developing a comprehensive test suite using `pytest` to cover all aspects of the project thoroughly.
