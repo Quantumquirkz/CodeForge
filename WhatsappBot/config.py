@@ -1,53 +1,38 @@
+"""Backward-compatible configuration exports.
+
+This module is kept for compatibility while the project migrates to `src/whatsapp_bot`.
 """
-Configuration file for WhatsApp Bot
-Contains all configuration settings and constants
-"""
 
-import os
-from dotenv import load_dotenv
+from __future__ import annotations
 
-# Load environment variables
-load_dotenv()
+import sys
+from pathlib import Path
 
-# Groq API Configuration
-GROQ_API_KEY = os.getenv('GROQ_API_KEY', '')
-GROQ_MODEL = os.getenv('GROQ_MODEL', 'llama-3.1-70b-versatile')  # Fast and efficient model
-GROQ_MAX_TOKENS = int(os.getenv('GROQ_MAX_TOKENS', '500'))
-GROQ_TEMPERATURE = float(os.getenv('GROQ_TEMPERATURE', '0.7'))
+SRC_PATH = Path(__file__).resolve().parent / "src"
+if str(SRC_PATH) not in sys.path:
+    sys.path.insert(0, str(SRC_PATH))
 
-# WhatsApp Configuration
-WHATSAPP_SESSION_PATH = os.getenv('WHATSAPP_SESSION_PATH', './sessions')
-WHATSAPP_QR_PATH = os.getenv('WHATSAPP_QR_PATH', './qr_code.png')
+from whatsapp_bot.infrastructure.config.settings import settings
 
-# Bot Configuration
-BOT_NAME = os.getenv('BOT_NAME', 'Asistente Virtual')
-BOT_LANGUAGE = os.getenv('BOT_LANGUAGE', 'es')  # Default Spanish
-ENABLE_LOGGING = os.getenv('ENABLE_LOGGING', 'true').lower() == 'true'
-LOG_FILE = os.getenv('LOG_FILE', './logs/bot.log')
+GROQ_API_KEY = settings.groq_api_key
+GROQ_MODEL = settings.groq_model
+GROQ_MAX_TOKENS = settings.groq_max_tokens
+GROQ_TEMPERATURE = settings.groq_temperature
 
-# Response Configuration
-MAX_RESPONSE_LENGTH = int(os.getenv('MAX_RESPONSE_LENGTH', '1000'))
-ENABLE_CONTEXT = os.getenv('ENABLE_CONTEXT', 'true').lower() == 'true'
-CONTEXT_MEMORY_SIZE = int(os.getenv('CONTEXT_MEMORY_SIZE', '10'))  # Number of messages to remember
+WHATSAPP_SESSION_PATH = settings.whatsapp_session_path
+WHATSAPP_QR_PATH = settings.whatsapp_qr_path
 
-# Rate Limiting
-RATE_LIMIT_ENABLED = os.getenv('RATE_LIMIT_ENABLED', 'true').lower() == 'true'
-RATE_LIMIT_MESSAGES = int(os.getenv('RATE_LIMIT_MESSAGES', '20'))  # Messages per minute
-RATE_LIMIT_WINDOW = int(os.getenv('RATE_LIMIT_WINDOW', '60'))  # Time window in seconds
+BOT_NAME = settings.bot_name
+BOT_LANGUAGE = settings.bot_language
+ENABLE_LOGGING = settings.enable_logging
+LOG_FILE = settings.log_file
 
-# Greeting messages
-GREETINGS = [
-    "¡Hola! 👋 ¿En qué puedo ayudarte hoy?",
-    "¡Buenos días! ¿Cómo puedo asistirte?",
-    "¡Hola! Estoy aquí para ayudarte. ¿Qué necesitas?",
-    "¡Saludos! ¿En qué puedo ser útil?"
-]
+MAX_RESPONSE_LENGTH = settings.max_response_length
+ENABLE_CONTEXT = settings.enable_context
+CONTEXT_MEMORY_SIZE = settings.context_memory_size
 
-# Farewell messages
-FAREWELLS = [
-    "¡Hasta luego! Que tengas un excelente día. 👋",
-    "¡Adiós! Fue un placer ayudarte.",
-    "¡Nos vemos pronto! Cualquier cosa, aquí estaré.",
-    "¡Hasta la próxima! Cuídate mucho."
-]
+RATE_LIMIT_ENABLED = settings.rate_limit_enabled
+RATE_LIMIT_MESSAGES = settings.rate_limit_messages
+RATE_LIMIT_WINDOW = settings.rate_limit_window
 
+VERIFY_TWILIO_SIGNATURE = settings.verify_twilio_signature
