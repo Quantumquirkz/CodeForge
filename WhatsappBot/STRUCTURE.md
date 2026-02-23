@@ -1,57 +1,145 @@
-# Estructura del Proyecto WhatsApp Bot
+# Diseño de estructura de carpetas — WhatsAppBot
 
-## 📁 Estructura de Directorios
+Este documento define una **propuesta inicial de arquitectura de carpetas** para pasar de un MVP monolítico (archivos en raíz) a un proyecto modular, mantenible y escalable.
 
-```
+## 1) Estructura actual (as-is)
+
+```text
 WhatsappBot/
-├── whatsapp_bot.py          # Aplicación principal y servidor Flask
-├── groq_client.py           # Cliente para API de Groq
-├── message_handler.py       # Procesador de mensajes y generación de respuestas
-├── bot_instructions.py       # Instrucciones y prompts del bot
-├── config.py                # Configuración y constantes
-├── example_usage.py         # Ejemplos de uso del bot
-├── requirements.txt         # Dependencias Python
-├── start.sh                 # Script de inicio rápido
-├── .env.example             # Ejemplo de variables de entorno
-├── .gitignore              # Archivos ignorados por Git
-├── README.md                # Documentación principal
-├── STRUCTURE.md             # Este archivo
-├── logs/                    # Archivos de log
-└── sessions/                # Sesiones de WhatsApp (si aplica)
+├── whatsapp_bot.py
+├── message_handler.py
+├── groq_client.py
+├── bot_instructions.py
+├── config.py
+├── example_usage.py
+├── start.sh
+├── requirements.txt
+├── .env.example
+└── README.md
 ```
 
-## 📄 Descripción de Archivos
+### Limitaciones actuales
 
-### Archivos Principales
+- Mezcla de capas (API + negocio + integración externa).
+- Dificulta pruebas aisladas.
+- Crecimiento riesgoso cuando aumenten proveedores o flujos.
 
-- **whatsapp_bot.py**: Servidor Flask que maneja webhooks de WhatsApp y procesa mensajes
-- **groq_client.py**: Cliente para interactuar con la API de Groq
-- **message_handler.py**: Lógica para procesar mensajes, clasificarlos y generar respuestas
-- **bot_instructions.py**: Prompts y configuraciones del comportamiento del bot
-- **config.py**: Configuración centralizada del proyecto
+---
 
-### Archivos de Configuración
+## 2) Estructura propuesta (to-be)
 
-- **requirements.txt**: Lista de dependencias Python necesarias
-- **.env.example**: Plantilla para variables de entorno
-- **.gitignore**: Archivos que no deben ser versionados
+```text
+WhatsappBot/
+├── src/
+│   └── whatsapp_bot/
+│       ├── app/
+│       │   ├── api/
+│       │   │   ├── routes.py               # Endpoints HTTP
+│       │   │   └── schemas.py              # DTOs/request-response
+│       │   └── bootstrap.py                # App factory / dependency wiring
+│       ├── domain/
+│       │   ├── entities/
+│       │   │   ├── message.py
+│       │   │   └── conversation.py
+│       │   ├── services/
+│       │   │   ├── language_detector.py
+│       │   │   ├── message_classifier.py
+│       │   │   └── context_manager.py
+│       │   └── ports/
+│       │       ├── llm_port.py             # Contrato para proveedor LLM
+│       │       └── messaging_port.py       # Contrato para proveedor WA
+│       ├── use_cases/
+│       │   └── process_incoming_message.py
+│       ├── integrations/
+│       │   ├── ai/
+│       │   │   └── groq_client.py
+│       │   └── messaging/
+│       │       ├── twilio_adapter.py
+│       │       └── meta_adapter.py
+│       ├── prompts/
+│       │   ├── system.py
+│       │   └── templates.py
+│       ├── infrastructure/
+│       │   ├── config/
+│       │   │   ├── settings.py
+│       │   │   └── env.py
+│       │   ├── logging/
+│       │   │   └── logger.py
+│       │   └── storage/
+│       │       └── in_memory_context_store.py
+│       └── shared/
+│           ├── exceptions.py
+│           └── types.py
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── e2e/
+├── scripts/
+│   ├── run_local.sh
+│   └── smoke_test.sh
+├── docs/
+│   ├── architecture.md
+│   ├── decisions/
+│   └── runbooks/
+├── logs/
+├── sessions/
+├── requirements.txt
+├── .env.example
+└── README.md
+```
 
-### Utilidades
+---
 
-- **example_usage.py**: Ejemplos de cómo usar los componentes del bot
-- **start.sh**: Script para iniciar el bot fácilmente
+## 3) Criterios de diseño
 
-### Directorios
+- **Separación por capas**: dominio aislado de frameworks y SDKs.
+- **Principio de inversión de dependencias**: el caso de uso depende de puertos (interfaces), no de Groq/Twilio directamente.
+- **Facilidad de pruebas**: mocks de puertos y adaptadores en integración.
+- **Evolución segura**: migración incremental sin “big-bang rewrite”.
 
-- **logs/**: Almacena archivos de log del bot
-- **sessions/**: Almacena sesiones de WhatsApp (si se usa WhatsApp Web)
+---
 
-## 🔧 Mantenimiento
+## 4) Plan de migración por fases
 
-Para mantener la estructura limpia:
+### Fase 1 — Empaquetado inicial
 
-1. No agregar archivos temporales o de prueba en la raíz
-2. Usar los directorios `logs/` y `sessions/` para archivos generados
-3. Mantener los archivos de configuración actualizados
-4. Documentar cualquier nuevo archivo o directorio
+- Crear `src/whatsapp_bot`.
+- Mover `config.py` a `infrastructure/config/settings.py`.
+- Mantener `whatsapp_bot.py` como wrapper temporal.
 
+### Fase 2 — Extraer dominio y casos de uso
+
+- Mover clasificación, idioma y contexto a `domain/services`.
+- Crear `use_cases/process_incoming_message.py`.
+
+### Fase 3 — Integraciones desacopladas
+
+- Mover Groq a `integrations/ai/groq_client.py` implementando `llm_port.py`.
+- Encapsular Twilio/Meta en `integrations/messaging`.
+
+### Fase 4 — QA y operación
+
+- Agregar pruebas unitarias + integración.
+- Añadir scripts de smoke test.
+- Documentar runbook de despliegue.
+
+---
+
+## 5) Convenciones sugeridas
+
+- Imports absolutos desde `whatsapp_bot`.
+- Tipado en funciones públicas.
+- Validación de inputs en borde (API/adapters).
+- Logs estructurados (JSON opcional en prod).
+- Sin lógica de negocio en rutas HTTP.
+
+---
+
+## 6) Resultado esperado
+
+Con esta estructura, WhatsAppBot queda listo para:
+
+- agregar más proveedores de IA,
+- soportar más canales de mensajería,
+- facilitar mantenimiento por equipos,
+- mejorar calidad mediante pruebas automatizadas.
