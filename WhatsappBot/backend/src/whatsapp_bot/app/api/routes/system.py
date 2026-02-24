@@ -19,6 +19,9 @@ def build_system_blueprint(repository: BotRepository) -> Blueprint:
             {
                 "admin_unsafe_no_auth": settings.admin_unsafe_no_auth,
                 "admin_public_risk": settings.admin_public_risk,
+                "admin_api_token_configured": bool(settings.admin_api_token.strip()),
+                "verify_twilio_signature": settings.verify_twilio_signature,
+                "twilio_auth_token_configured": bool(settings.twilio_auth_token.strip()),
                 "allowed_origins": settings.admin_allowed_origins,
                 "admin_rate_limit_messages": settings.admin_rate_limit_messages,
             }

@@ -24,7 +24,8 @@ def create_app() -> Flask:
 
     init_engine(settings.database_url)
     init_session_factory()
-    ensure_schema()
+    if settings.auto_create_schema:
+        ensure_schema()
 
     CORS(
         app,

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hmac
+
 from flask import Blueprint, jsonify, request
 from pydantic import ValidationError
 
@@ -14,6 +16,12 @@ def build_admin_blueprint(repository: BotRepository, limiter: InMemoryRateLimite
     bp = Blueprint("admin", __name__, url_prefix="/api/v1/admin")
     engine = PersonaEngine()
 
+    def _extract_token() -> str:
+        auth_header = request.headers.get("Authorization", "").strip()
+        if auth_header.lower().startswith("bearer "):
+            return auth_header[7:].strip()
+        return request.headers.get("X-Admin-Token", "").strip()
+
     @bp.before_request
     def guard_admin_requests():
         if request.method not in {"GET", "PUT", "POST", "DELETE", "OPTIONS"}:
@@ -26,8 +34,16 @@ def build_admin_blueprint(repository: BotRepository, limiter: InMemoryRateLimite
         if not limiter.allow(key):
             return jsonify({"status": "error", "message": "Admin rate limit exceeded"}), 429
 
-        if not settings.admin_unsafe_no_auth:
-            return jsonify({"status": "error", "message": "Auth required"}), 401
+        if settings.admin_unsafe_no_auth:
+            return None
+
+        expected_token = settings.admin_api_token.strip()
+        if not expected_token:
+            return jsonify({"status": "error", "message": "Admin auth is not configured"}), 503
+
+        provided_token = _extract_token()
+        if not provided_token or not hmac.compare_digest(provided_token, expected_token):
+            return jsonify({"status": "error", "message": "Unauthorized"}), 401
 
     @bp.get("/config")
     def get_config():

@@ -5,6 +5,16 @@ const http = axios.create({
   timeout: 10000,
 });
 
+http.interceptors.request.use((config) => {
+  const envToken = import.meta.env.VITE_ADMIN_API_TOKEN;
+  const storedToken = typeof window !== "undefined" ? window.localStorage.getItem("admin_api_token") : "";
+  const token = (envToken || storedToken || "").trim();
+  if (token) {
+    config.headers["X-Admin-Token"] = token;
+  }
+  return config;
+});
+
 export const api = {
   getConfig: async () => (await http.get("/api/v1/admin/config")).data,
   updateConfig: async (payload) => (await http.put("/api/v1/admin/config", payload)).data,

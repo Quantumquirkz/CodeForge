@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from flask import Blueprint, Response, jsonify, request
+from twilio.request_validator import RequestValidator
 from twilio.twiml.messaging_response import MessagingResponse
 
+from whatsapp_bot.core.settings import settings
 from whatsapp_bot.integrations.messaging import MetaAdapter, TwilioAdapter
 from whatsapp_bot.runtime.process_incoming_message import ProcessIncomingMessage
 
@@ -16,6 +18,16 @@ def build_webhook_blueprint(process_use_case: ProcessIncomingMessage) -> Bluepri
         form_data = request.form.to_dict()
 
         is_twilio = bool(form_data.get("From"))
+        if is_twilio and settings.verify_twilio_signature:
+            auth_token = settings.twilio_auth_token.strip()
+            if not auth_token:
+                return jsonify({"status": "error", "message": "Twilio auth token is not configured"}), 503
+
+            signature = request.headers.get("X-Twilio-Signature", "")
+            validator = RequestValidator(auth_token)
+            if not signature or not validator.validate(request.url, form_data, signature):
+                return jsonify({"status": "error", "message": "Invalid Twilio signature"}), 403
+
         try:
             if is_twilio:
                 sender, message = TwilioAdapter.normalize(payload, form_data)

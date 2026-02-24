@@ -8,7 +8,7 @@ export function App() {
   return (
     <div className="container">
       <h1>WhatsApp Bot Admin Panel</h1>
-      <div className="banner">Modo inseguro sin autenticacion (temporal)</div>
+      <div className="banner">Revisa la tarjeta de System Status para validar seguridad activa.</div>
       <div className="grid">
         <GeneralSettings />
         <PersonalityProfile />

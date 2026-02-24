@@ -18,8 +18,12 @@ class Settings(BaseSettings):
     rate_limit_window: int = 60
     admin_rate_limit_messages: int = 40
 
-    admin_unsafe_no_auth: bool = True
+    admin_unsafe_no_auth: bool = False
+    admin_api_token: str = ""
     admin_allowed_origins: list[str] = Field(default_factory=lambda: ["http://localhost:5173"])
+    verify_twilio_signature: bool = True
+    twilio_auth_token: str = ""
+    auto_create_schema: bool = True
 
     persona_max_samples: int = 100
     persona_style_max_chars: int = 3500

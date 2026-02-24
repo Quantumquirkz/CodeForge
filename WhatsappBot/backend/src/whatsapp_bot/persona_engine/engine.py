@@ -30,11 +30,11 @@ class PersonaEngine:
 
         avg_len = int(sum(len(x) for x in lines) / len(lines))
         emoji_rate = round(sum(1 for x in lines if re.search(r"[\U0001F300-\U0001FAFF]", x)) / len(lines), 2)
-        question_rate = round(sum(1 for x in lines if "?" in x or "¿" in x) / len(lines), 2)
+        question_rate = round(sum(1 for x in lines if "?" in x or "\u00BF" in x) / len(lines), 2)
 
         words = []
         for line in lines:
-            parts = re.findall(r"[a-zA-ZáéíóúÁÉÍÓÚñÑ]{4,}", line.lower())
+            parts = re.findall(r"[A-Za-z\u00C0-\u017F]{4,}", line.lower())
             words.extend(parts)
         top_phrases = [w for w, _ in Counter(words).most_common(8)]
 
