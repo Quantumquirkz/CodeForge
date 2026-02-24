@@ -20,6 +20,11 @@ class Settings(BaseSettings):
     BLOCKCHAIN_RPC_URL: Optional[str] = None
     BLOCKCHAIN_DEFAULT_WALLET: Optional[str] = None
 
+<<<<<<< HEAD
+    ACTION_AUDIT_LOG_PATH: str = "./audit/actions.jsonl"
+
+=======
+>>>>>>> main
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
