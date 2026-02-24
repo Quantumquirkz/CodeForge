@@ -9,9 +9,14 @@ from __future__ import annotations
 
 from collections import defaultdict
 from threading import Lock
-from typing import Any, DefaultDict
+from typing import TYPE_CHECKING, Any, DefaultDict
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
+
+if TYPE_CHECKING:
+    from app.policy.action_guard import PendingAction
+else:
+    PendingAction = Any
 
 
 class SessionStore:
@@ -20,7 +25,7 @@ class SessionStore:
     def __init__(self, max_messages: int = 20) -> None:
         self._max_messages = max_messages
         self._store: DefaultDict[str, list[BaseMessage]] = defaultdict(list)
-        self._pending_actions: dict[str, Any] = {}
+        self._pending_actions: dict[str, PendingAction] = {}
         self._lock = Lock()
 
     def get_history(self, session_id: str) -> list[BaseMessage]:
@@ -40,12 +45,12 @@ class SessionStore:
             if len(self._store[session_id]) > self._max_messages:
                 self._store[session_id] = self._store[session_id][-self._max_messages :]
 
-    def set_pending_action(self, session_id: str, pending_action: Any) -> None:
+    def set_pending_action(self, session_id: str, pending_action: PendingAction) -> None:
         """Store one pending action for a session."""
         with self._lock:
             self._pending_actions[session_id] = pending_action
 
-    def get_pending_action(self, session_id: str) -> Any | None:
+    def get_pending_action(self, session_id: str) -> PendingAction | None:
         """Fetch a pending action for a session if available."""
         with self._lock:
             return self._pending_actions.get(session_id)
