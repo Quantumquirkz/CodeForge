@@ -5,7 +5,7 @@
 void testBST() {
     BST tree;
 
-    // Test Inserción y Búsqueda
+    // Test Insertion and Search
     tree.insert(50);
     tree.insert(30);
     tree.insert(20);
@@ -18,15 +18,15 @@ void testBST() {
     assert(tree.search(20) == true);
     assert(tree.search(90) == false);
 
-    // Test Eliminación
-    tree.remove(20); // Caso: Hoja
+    // Test Deletion
+    tree.remove(20); // Case: Leaf
     assert(tree.search(20) == false);
 
-    tree.remove(30); // Caso: Un hijo
+    tree.remove(30); // Case: One child
     assert(tree.search(30) == false);
     assert(tree.search(40) == true);
 
-    tree.remove(50); // Caso: Dos hijos
+    tree.remove(50); // Case: Two children
     assert(tree.search(50) == false);
     assert(tree.search(60) == true);
     assert(tree.search(70) == true);

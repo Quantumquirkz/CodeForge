@@ -106,11 +106,11 @@ This section focuses on **Code Profundo**: problems that require advanced algori
 
 ## 👤 Author
 
-**Jhuomar Barria**
+**Jhuomar Boskoll Quintero**
 - Student of Computer Systems and Information Technology at UTP
 - AI and Backend Developer
 - Email: [jhuomar3105@gmail.com](mailto:jhuomar3105@gmail.com)
-- LinkedIn: [Jhuomar Barría](https://www.linkedin.com/in/jhuomar-barría/)
+- LinkedIn: [Jhuomar Boskoll Quintero](https://www.linkedin.com/in/jhuomar-barría/)
 - Phone: +507 6958-2026
 
 ## 📝 License

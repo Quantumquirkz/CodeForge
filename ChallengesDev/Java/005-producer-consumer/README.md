@@ -1,27 +1,27 @@
-# Reto 005: Producer-Consumer Pattern
+# Challenge 005: Producer-Consumer Pattern
 
-## Descripción del Problema
-Implementa el patrón de diseño **Productor-Consumidor** utilizando una `BlockingQueue` personalizada o una existente. El objetivo es que uno o más hilos "productores" generen datos y los coloquen en una cola con capacidad limitada, mientras que uno o más hilos "consumidores" retiren esos datos para procesarlos. El sistema debe manejar correctamente situaciones donde la cola esté llena (productores esperan) o vacía (consumidores esperan).
+## Problem Description
+Implement the **Producer-Consumer** design pattern using a custom or existing `BlockingQueue`. The goal is for one or more "producer" threads to generate data and place it in a capacity-limited queue, while one or more "consumer" threads retrieve that data for processing. The system must correctly handle situations where the queue is full (producers wait) or empty (consumers wait).
 
-## Formato de Entrada y Salida
-- **Clases**:
-  - `Producer`: Un hilo que produce enteros.
-  - `Consumer`: Un hilo que consume enteros.
-  - `DataBuffer`: La estructura que actúa como cola sincronizada.
+## Input and Output Format
+- **Classes**:
+  - `Producer`: A thread that produces integers.
+  - `Consumer`: A thread that consumes integers.
+  - `DataBuffer`: The structure that acts as a synchronized queue.
 
-## Restricciones y Casos Borde
-- Capacidad máxima de la cola.
-- Manejo de interrupciones de hilos.
-- Señalización de fin de producción (veneno/poison pill).
+## Constraints and Edge Cases
+- Maximum queue capacity.
+- Thread interruption handling.
+- End-of-production signaling (poison pill).
 
-## Ejemplo de Uso
+## Usage Example
 ```java
 DataBuffer<Integer> buffer = new DataBuffer<>(5);
 Thread producer = new Thread(new Producer(buffer));
 Thread consumer = new Thread(new Consumer(buffer));
 ```
 
-## Conceptos Clave
-- **Synchronization**: Uso de `wait()` y `notifyAll()` o `Condition`.
-- **Inter-thread Communication**: Intercambio de datos seguro entre hilos.
-- **Backpressure**: Qué sucede cuando la producción es más rápida que el consumo.
+## Key Concepts
+- **Synchronization**: Use of `wait()` and `notifyAll()` or `Condition`.
+- **Inter-thread Communication**: Safe data exchange between threads.
+- **Backpressure**: What happens when production is faster than consumption.

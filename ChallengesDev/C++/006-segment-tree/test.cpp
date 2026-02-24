@@ -11,6 +11,6 @@ int main() {
     assert(st.query(1, 3) == 22);
     assert(st.query(0, 5) == 43);
 
-    std::cout << "Reto 006 (C++): SegmentTree verificado." << std::endl;
+    std::cout << "Challenge 006 (C++): SegmentTree verified." << std::endl;
     return 0;
 }

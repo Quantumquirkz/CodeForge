@@ -18,6 +18,6 @@ int main() {
     assert(path.front() == start);
     assert(path.back() == goal);
 
-    std::cout << "Reto 004 (C++): A* Pathfinding verificado." << std::endl;
+    std::cout << "Challenge 004 (C++): A* Pathfinding verified." << std::endl;
     return 0;
 }

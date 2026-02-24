@@ -11,6 +11,6 @@ public class Test {
         t1.join();
         t2.join();
         
-        System.out.println("Reto 005 (Java): Ejecución de Productor-Consumidor finalizada.");
+        System.out.println("Challenge 005 (Java): Producer-Consumer execution completed.");
     }
 }

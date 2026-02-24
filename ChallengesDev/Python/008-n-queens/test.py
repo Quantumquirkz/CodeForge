@@ -5,7 +5,7 @@ class TestNQueens(unittest.TestCase):
     def test_n4(self):
         solutions = solveNQueens(4)
         self.assertEqual(len(solutions), 2)
-        # Verificar que una de las soluciones sea la esperada
+        # Verify that one of the solutions matches the expected result
         expected = [".Q..", "...Q", "Q...", "..Q."]
         self.assertIn(expected, solutions)
 
@@ -13,7 +13,7 @@ class TestNQueens(unittest.TestCase):
         self.assertEqual(solveNQueens(1), [["Q"]])
 
     def test_n2_n3(self):
-        # No hay soluciones para 2 y 3
+        # No solutions for 2 and 3
         self.assertEqual(solveNQueens(2), [])
         self.assertEqual(solveNQueens(3), [])
 

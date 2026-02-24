@@ -17,6 +17,6 @@ int main() {
     std::vector<int> expected2 = {1, 2, 5, 5, 6, 9};
     assert(nums2 == expected2);
 
-    std::cout << "Reto 009 (C++): Dual-Pivot Quicksort verificado." << std::endl;
+    std::cout << "Challenge 009 (C++): Dual-Pivot Quicksort verified." << std::endl;
     return 0;
 }

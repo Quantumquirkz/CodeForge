@@ -19,11 +19,11 @@ int main() {
     assert(dist[3] == -2);
     assert(dist[4] == 1);
 
-    // Caso de ciclo negativo
+    // Negative cycle case
     std::vector<Edge> neg_cycle = {{0, 1, 1}, {1, 2, -1}, {2, 0, -1}};
     dist = bf.shortestPath(3, neg_cycle, 0);
     assert(dist.empty());
 
-    std::cout << "Reto 007 (C++): Bellman-Ford verificado." << std::endl;
+    std::cout << "Challenge 007 (C++): Bellman-Ford verified." << std::endl;
     return 0;
 }

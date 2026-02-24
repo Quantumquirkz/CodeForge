@@ -15,12 +15,12 @@ int main() {
 
     assert(p1 != nullptr);
     assert(p2 != nullptr);
-    assert(p3 == nullptr); // Pool lleno
+    assert(p3 == nullptr); // Pool full
 
     pool.deallocate(p1);
     void* p4 = pool.allocate();
-    assert(p4 == p1); // Reutilización de memoria
+    assert(p4 == p1); // Memory reuse
 
-    std::cout << "Reto 003 (C++): MemoryPool verificado." << std::endl;
+    std::cout << "Challenge 003 (C++): MemoryPool verified." << std::endl;
     return 0;
 }

@@ -3,34 +3,34 @@ from typing import Dict, List, Tuple, Optional
 
 def dijkstra(graph: Dict[int, List[Tuple[int, int]]], start: int) -> Tuple[Dict[int, float], Dict[int, Optional[int]]]:
     """
-    Calcula el camino más corto en un grafo pesado usando el algoritmo de Dijkstra.
+    Computes the shortest path in a weighted graph using Dijkstra's algorithm.
     
     Args:
-        graph: Diccionario donde las claves son nodos y valores son listas de (vecino, peso).
-        start: Nodo inicial.
+        graph: Dictionary where keys are nodes and values are lists of (neighbor, weight).
+        start: Starting node.
         
     Returns:
-        Tuple: (distancias, padres) para reconstrucción de caminos.
+        Tuple: (distances, parents) for path reconstruction.
     """
-    # Inicializar distancias como infinito y padres como None
+    # Initialize distances as infinity and parents as None
     distances = {node: float('inf') for node in graph}
     distances[start] = 0
     parents = {node: None for node in graph}
     
-    # Priority Queue: (distancia_acumulada, nodo_actual)
+    # Priority Queue: (accumulated_distance, current_node)
     pq = [(0, start)]
     
     while pq:
         current_distance, current_node = heapq.heappop(pq)
         
-        # Si ya encontramos un camino más corto a este nodo, saltar
+        # If we already found a shorter path to this node, skip
         if current_distance > distances[current_node]:
             continue
             
         for neighbor, weight in graph[current_node]:
             distance = current_distance + weight
             
-            # Relajación de la arista
+            # Edge relaxation
             if distance < distances[neighbor]:
                 distances[neighbor] = distance
                 parents[neighbor] = current_node
@@ -47,9 +47,9 @@ def reconstruct_path(parents: Dict[int, Optional[int]], target: int) -> List[int
         curr = parents[curr]
     return path[::-1]
 
-# --- Análisis de Complejidad ---
-# Temporal: O((V + E) log V)
-#   - Cada nodo se extrae del heap una vez: O(V log V)
-#   - Cada arista se relaja una vez y puede provocar un push al heap: O(E log V)
-# Espacial: O(V + E)
-#   - Almacenamos distancias, padres y el grafo en memoria.
+# --- Complexity Analysis ---
+# Time: O((V + E) log V)
+#   - Each node is extracted from the heap once: O(V log V)
+#   - Each edge is relaxed once and may cause a heap push: O(E log V)
+# Space: O(V + E)
+#   - We store distances, parents, and the graph in memory.

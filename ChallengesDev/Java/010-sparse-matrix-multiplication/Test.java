@@ -6,11 +6,11 @@ public class Test {
         int[][] m2 = {{7, 0, 0}, {0, 0, 0}, {0, 0, 1}};
         int[][] res = sol.multiply(m1, m2);
 
-        // Validar resultado
+        // Validate result
         assert res[0][0] == 7;
         assert res[1][0] == -7;
         assert res[1][2] == 3;
 
-        System.out.println("Reto 010 (Java): Multiplicación de matrices dispersas finalizada.");
+        System.out.println("Challenge 010 (Java): Sparse matrix multiplication completed.");
     }
 }

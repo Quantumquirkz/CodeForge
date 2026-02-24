@@ -48,6 +48,9 @@ def create_app() -> FastAPI:
     @fastapi_app.post("/voice/process", response_model=VoiceProcessResponse)
     async def process_voice(request: VoiceProcessRequest) -> VoiceProcessResponse:
         """Process voice input and return both text and synthesized audio."""
+        if not request.audio_file_path:
+            raise HTTPException(status_code=400, detail="Audio file path is required.")
+
         text = voice_processor.transcribe_audio(request.audio_file_path)
         if not text:
             raise HTTPException(status_code=400, detail="Audio transcription failed.")

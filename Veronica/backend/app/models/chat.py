@@ -1,7 +1,7 @@
 """Chat-related API schemas.
 
-These models define strict payload contracts for websocket chat interactions
-and keep message validation centralized.
+This module defines strict payload contracts for WebSocket chat interactions,
+ensuring message validation is centralized and consistent.
 """
 
 from pydantic import BaseModel, Field

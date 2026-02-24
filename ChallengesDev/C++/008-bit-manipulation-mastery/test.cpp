@@ -17,6 +17,6 @@ int main() {
     // reverseBits test (example: 1 is 00...01, reversed is 10...00)
     assert(bm.reverseBits(1) == 2147483648u);
 
-    std::cout << "Reto 008 (C++): Bit Manipulation Mastery verificado." << std::endl;
+    std::cout << "Challenge 008 (C++): Bit Manipulation Mastery verified." << std::endl;
     return 0;
 }

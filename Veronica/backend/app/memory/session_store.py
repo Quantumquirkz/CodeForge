@@ -1,8 +1,8 @@
 """In-memory conversation session store.
 
-This module provides a lightweight, process-local session history manager to
-stabilize chat context handling while the project evolves toward persistent
-session infrastructure.
+This module provides a thread-safe, process-local session history manager for
+storing conversation history and pending actions. It is designed to stabilize
+chat context handling while the project evolves toward persistent session infrastructure.
 """
 
 from __future__ import annotations

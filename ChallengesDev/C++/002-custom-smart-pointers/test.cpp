@@ -16,11 +16,11 @@ int main() {
         assert(ptr1.use_count() == 1);
     }
     
-    // Prueba de auto-asignación
+    // Self-assignment test
     CustomSharedPtr<int> ptr3(new int(50));
     ptr3 = ptr3;
     assert(ptr3.use_count() == 1);
 
-    std::cout << "Reto 002 (C++): CustomSharedPtr verificado." << std::endl;
+    std::cout << "Challenge 002 (C++): CustomSharedPtr verified." << std::endl;
     return 0;
 }

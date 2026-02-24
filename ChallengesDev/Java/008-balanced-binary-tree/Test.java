@@ -9,10 +9,10 @@ public class Test {
         tree.root = tree.insert(tree.root, 50);
         tree.root = tree.insert(tree.root, 25);
 
-        // La raíz debería ser 30 después de los balanceos
-        // Pero depende del orden exacto, lo importante es que esté balanceado
+        // The root should be 30 after balancing
+        // But it depends on the exact order; the important thing is that it is balanced
         assert Math.abs(tree.getBalance(tree.root)) <= 1;
         
-        System.out.println("Reto 008 (Java): AVL Tree insertado y balanceado.");
+        System.out.println("Challenge 008 (Java): AVL Tree inserted and balanced.");
     }
 }

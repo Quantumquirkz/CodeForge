@@ -17,9 +17,9 @@ int main() {
     tree.insert(6);
     tree.insert(13);
 
-    // En un Red-Black Tree, la raíz siempre es negra
+    // In a Red-Black Tree, the root is always black
     assert(tree.getRoot()->color == BLACK);
 
-    std::cout << "Reto 005 (C++): Red-Black Tree insertado y balanceado." << std::endl;
+    std::cout << "Challenge 005 (C++): Red-Black Tree inserted and balanced." << std::endl;
     return 0;
 }
