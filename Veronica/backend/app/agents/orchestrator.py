@@ -61,7 +61,6 @@ class AgentOrchestrator:
     ) -> AsyncIterator[str]:
         """Asynchronous response streaming for websocket chat."""
         enhanced_input = self._build_enhanced_input(user_input)
-
         full_response = ""
         async for chunk in self.executor.astream(
             {
