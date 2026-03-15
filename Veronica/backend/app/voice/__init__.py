@@ -1,1 +1,1 @@
-"""Voice module: Whisper STT and ElevenLabs TTS."""
+"""Voice: STT (Whisper) and TTS (ElevenLabs/OpenAI)."""

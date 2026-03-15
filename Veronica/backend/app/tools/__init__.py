@@ -1,1 +1,1 @@
-"""Modular tool registry for the agent."""
+"""Tool registry and base tools."""

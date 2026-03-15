@@ -1,70 +1,167 @@
-from __future__ import annotations
+"""FastAPI app and WebSocket chat endpoint."""
 
-from uuid import uuid4
+from fastapi import FastAPI, File, UploadFile, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from app.agents.orchestrator import process_message
+from app.voice.stt import transcribe_base64
+from app.voice.tts import synthesize_to_base64
+from app.core.config import settings
+from app.plugins.registry import list_plugins, get_plugin, register_plugin, save_plugin_to_disk
+from app.policy.approval_gate import approve_plugin, reject_plugin
 
-from app.agents.orchestrator import agent_orchestrator
-from app.api.chat_handler import handle_chat_message
-from app.api.middleware import RequestContextLoggingMiddleware
-from app.memory.session_store import session_store
-from app.models.voice import VoiceProcessRequest, VoiceProcessResponse
-from app.policy.action_guard import action_guard
-from app.policy.confirmation import handle_confirmation_command
-from app.voice.processor import voice_processor
+app = FastAPI(title="Veronica", version="2.0.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
-def create_app() -> FastAPI:
-    """Build FastAPI app with centralized middleware and route registration."""
-    fastapi_app = FastAPI(title="Veronica AI Backend")
-    fastapi_app.add_middleware(RequestContextLoggingMiddleware)
+class PluginApprovalRequest(BaseModel):
+    session_id: str
+    plugin_name: str
+    code: str
+    approved: bool
 
-    @fastapi_app.get("/")
-    async def root() -> dict[str, str]:
-        return {"message": "Veronica AI Backend is running."}
 
-    @fastapi_app.websocket("/ws/chat")
-    async def websocket_chat(websocket: WebSocket) -> None:
-        await websocket.accept()
+class SynthesizeRequest(BaseModel):
+    text: str
 
-        session_id = websocket.query_params.get("session_id") or str(uuid4())
 
+@app.get("/health")
+def health():
+    """Health check."""
+    return {"status": "ok"}
+
+
+@app.get("/api/plugins")
+def api_list_plugins():
+    """List registered plugins."""
+    return {"plugins": list_plugins()}
+
+
+@app.post("/api/plugins/approve")
+def api_approve_plugin(req: PluginApprovalRequest):
+    """Approve or reject a generated plugin."""
+    if req.approved:
         try:
-            while True:
-                raw_data = await websocket.receive_text()
-                result = await handle_chat_message(
-                    raw_data=raw_data,
-                    session_id=session_id,
-                    session_store=session_store,
-                    action_guard=action_guard,
-                    confirmation_handler=handle_confirmation_command,
-                    orchestrator=agent_orchestrator,
+            exec_globals: dict = {}
+            exec(req.code, exec_globals)
+            run_fn = exec_globals.get("run")
+            if run_fn and callable(run_fn):
+                register_plugin(req.plugin_name, run_fn)
+                save_plugin_to_disk(req.plugin_name, req.code)
+                approve_plugin(req.session_id, req.plugin_name, req.code)
+                return {"status": "approved", "plugin_name": req.plugin_name}
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
+    reject_plugin(req.session_id, req.plugin_name)
+    return {"status": "rejected"}
+
+
+@app.post("/api/voice/transcribe")
+async def api_voice_transcribe(audio: UploadFile = File(...)):
+    """Transcribe audio file to text (multipart/form-data)."""
+    try:
+        data = await audio.read()
+        format_str = audio.filename.split(".")[-1] if audio.filename else "webm"
+        text = transcribe_audio(data, format=format_str)
+        return {"text": text}
+    except Exception as e:
+        return {"error": str(e), "text": ""}
+
+
+@app.post("/api/voice/synthesize")
+def api_voice_synthesize(req: SynthesizeRequest):
+    """Synthesize text to speech. Returns JSON with audio_base64 and format."""
+    try:
+        audio_b64 = synthesize_to_base64(req.text)
+        return {"audio_base64": audio_b64, "format": "mp3"}
+    except Exception as e:
+        return {"error": str(e), "audio_base64": "", "format": ""}
+
+
+@app.websocket("/ws/chat")
+async def websocket_chat(websocket: WebSocket):
+    """WebSocket endpoint for chat with heartbeat."""
+    await websocket.accept()
+    session_id = "default"
+    try:
+        while True:
+            data = await websocket.receive_json()
+            msg_type = data.get("type", "message")
+            if msg_type == "ping":
+                await websocket.send_json({"type": "pong"})
+                continue
+            if msg_type == "voice_input":
+                audio_b64 = data.get("audio_base64", "")
+                fmt = data.get("format", "webm")
+                sid = data.get("session_id") or session_id
+                session_id = sid
+                if not audio_b64:
+                    await websocket.send_json({"type": "error", "error": "Empty audio"})
+                    continue
+                try:
+                    text = transcribe_base64(audio_b64, format=fmt)
+                    if not text.strip():
+                        await websocket.send_json({"type": "error", "error": "No speech detected"})
+                        continue
+                    response = process_message(text, session_id=session_id)
+                    audio_out = synthesize_to_base64(response)
+                    await websocket.send_json(
+                        {
+                            "type": "message",
+                            "role": "assistant",
+                            "content": response,
+                        }
+                    )
+                    await websocket.send_json(
+                        {
+                            "type": "voice_output",
+                            "audio_base64": audio_out,
+                            "format": "mp3",
+                        }
+                    )
+                except Exception as e:
+                    await websocket.send_json({"type": "error", "error": str(e)})
+            elif msg_type == "message":
+                text = data.get("text", "").strip()
+                if not text:
+                    await websocket.send_json(
+                        {"type": "error", "error": "Empty message"}
+                    )
+                    continue
+                sid = data.get("session_id") or session_id
+                session_id = sid
+                response = process_message(text, session_id=session_id)
+                await websocket.send_json(
+                    {
+                        "type": "message",
+                        "role": "assistant",
+                        "content": response,
+                    }
                 )
-                for outbound_payload in result.outbound_messages:
-                    await websocket.send_text(outbound_payload)
-        except WebSocketDisconnect:
-            return
-
-    @fastapi_app.post("/voice/process", response_model=VoiceProcessResponse)
-    async def process_voice(request: VoiceProcessRequest) -> VoiceProcessResponse:
-        """Process voice input and return both text and synthesized audio."""
-        if not request.audio_file_path:
-            raise HTTPException(status_code=400, detail="Audio file path is required.")
-
-        text = voice_processor.transcribe_audio(request.audio_file_path)
-        if not text:
-            raise HTTPException(status_code=400, detail="Audio transcription failed.")
-
-        response_text = agent_orchestrator.run(text)
-        audio_response = voice_processor.text_to_speech(response_text)
-
-        return VoiceProcessResponse(
-            user_text=text,
-            response_text=response_text,
-            audio_response=audio_response.hex(),
-        )
-
-    return fastapi_app
-
-
-app = create_app()
+                if data.get("request_tts"):
+                    try:
+                        audio_out = synthesize_to_base64(response)
+                        await websocket.send_json(
+                            {"type": "voice_output", "audio_base64": audio_out, "format": "mp3"}
+                        )
+                    except Exception:
+                        pass
+            elif msg_type == "session":
+                session_id = data.get("session_id", session_id)
+    except WebSocketDisconnect:
+        pass
+    except Exception as e:
+        try:
+            await websocket.send_json(
+                {"type": "error", "error": str(e)}
+            )
+        except Exception:
+            pass

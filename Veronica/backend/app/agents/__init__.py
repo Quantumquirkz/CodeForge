@@ -1,1 +1,1 @@
-"""Agent orchestration and LangChain integration."""
+"""LangGraph agents and orchestrator."""

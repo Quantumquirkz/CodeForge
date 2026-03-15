@@ -1,1 +1,1 @@
-"""Veronica backend test suite."""
+"""Tests for Veronica backend."""

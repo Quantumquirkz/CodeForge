@@ -1,1 +1,1 @@
-"""Veronica backend application package."""
+"""Veronica - JARVIS-like AI assistant with multi-agent architecture."""

@@ -1,1 +1,1 @@
-"""Memory management: ChromaDB and session store."""
+"""Memory and session store."""

@@ -1,1 +1,1 @@
-"""Policy layer: action guard, confirmation, and audit logging."""
+"""Policy, action guard, and audit."""

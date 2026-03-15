@@ -1,1 +1,1 @@
-"""Core configuration, factories, and utilities."""
+"""Core configuration and factories."""

@@ -1,28 +1,48 @@
+"""Application configuration."""
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import Optional
 
 
 class Settings(BaseSettings):
-    OPENAI_API_KEY: Optional[str] = None
-    ANTHROPIC_API_KEY: Optional[str] = None
-    ELEVENLABS_API_KEY: Optional[str] = None
+    """Application settings loaded from environment."""
 
-    CHROMA_DB_PATH: str = "./chroma_db"
-    LOG_LEVEL: str = "INFO"
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
-    VERONICA_PERSONA: str = (
-        "You are Veronica, an AI assistant inspired by J.A.R.V.I.S. with a philosophy of "
-        "Empathetic Intelligence. You are kind, polite, proactive, and warm."
-    )
+    # LLM
+    openai_api_key: str = ""
+    anthropic_api_key: str = ""
+    llm_provider: str = "openai"  # openai | anthropic
+    llm_model: str = "gpt-4o"
 
-    BLOCKCHAIN_ENABLED: bool = False
-    BLOCKCHAIN_NETWORK: str = "ethereum"
-    BLOCKCHAIN_RPC_URL: Optional[str] = None
-    BLOCKCHAIN_DEFAULT_WALLET: Optional[str] = None
+    # Embeddings
+    embeddings_model: str = "text-embedding-3-small"
 
-    ACTION_AUDIT_LOG_PATH: str = "./audit/actions.jsonl"
+    # ChromaDB
+    chroma_db_path: str = "./chroma_db"
+    chroma_collection_name: str = "veronica_knowledge"
+    plugins_dir: str = "./plugins"
 
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    # Web search
+    tavily_api_key: str = ""
+    serper_api_key: str = ""
+
+    # Policy
+    action_audit_log_path: str = "./logs/action_audit.jsonl"
+    max_tools_per_session: int = 5
+    max_plugin_executions: int = 100
+
+    # Voice
+    voice_enabled: bool = True
+    tts_provider: str = "openai"  # openai | elevenlabs
+    tts_model: str = "tts-1"
+    tts_voice: str = "alloy"  # OpenAI: alloy, echo, fable, onyx, nova, shimmer
+    elevenlabs_api_key: str = ""
+    stt_language: str = ""  # e.g. es, en; empty = auto-detect
+
+    # Server
+    host: str = "0.0.0.0"
+    port: int = 8001
+    cors_origins: list[str] = ["http://localhost:3000"]
 
 
 settings = Settings()
