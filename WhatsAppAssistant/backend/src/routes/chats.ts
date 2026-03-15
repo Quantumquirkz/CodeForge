@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { listChats, updateChatRules, type ChatRules } from "../db/repositories/chats.js";
+import {
+  listChats,
+  updateChatRules,
+  getChatById,
+  type ChatRules,
+} from "../db/repositories/chats.js";
 import { getOrCreateDefaultSession } from "../db/repositories/sessions.js";
 
 const router = Router();
@@ -19,11 +24,19 @@ router.patch("/:id/rules", async (req, res) => {
     const chatId = Number(req.params.id);
     const { respond, keyword } = req.body as { respond?: string; keyword?: string };
     const rules: ChatRules = {
-      respond: respond === "never" || respond === "on_mention" || respond === "keyword" ? respond : "respond_always",
+      respond:
+        respond === "never" || respond === "on_mention" || respond === "keyword"
+          ? respond
+          : "respond_always",
       keyword: keyword ?? null,
     };
     await updateChatRules(chatId, rules);
-    res.json({ ok: true });
+    const chat = await getChatById(chatId);
+    if (!chat) {
+      res.status(404).json({ error: "Chat not found" });
+      return;
+    }
+    res.json(chat);
   } catch (err) {
     res.status(500).json({ error: "Failed to update rules" });
   }

@@ -43,6 +43,15 @@ export async function getOrCreateChat(
   return inserted.rows[0];
 }
 
+export async function getChatById(chatId: number): Promise<Chat | null> {
+  const r = await pool.query<Chat>(
+    `SELECT id, session_id, wa_chat_id, name, is_group, rules, created_at, updated_at
+     FROM chats WHERE id = $1`,
+    [chatId]
+  );
+  return r.rows[0] ?? null;
+}
+
 export async function getChatByWaId(sessionId: number, waChatId: string): Promise<Chat | null> {
   const r = await pool.query<Chat>(
     `SELECT id, session_id, wa_chat_id, name, is_group, rules, created_at, updated_at

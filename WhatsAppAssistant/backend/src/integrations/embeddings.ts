@@ -6,12 +6,16 @@ const logger = getLogger("embeddings");
 const EMBEDDING_DIM = 384;
 const MODEL_ID = "Xenova/all-MiniLM-L6-v2";
 
-let extractor: Awaited<ReturnType<typeof pipeline>> | null = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let extractor: any = null;
 
 async function getExtractor() {
   if (!extractor) {
     logger.info("Loading local embedding model %s...", MODEL_ID);
-    extractor = await pipeline("feature-extraction", MODEL_ID, { quantized: true });
+    extractor = await pipeline("feature-extraction", MODEL_ID, {
+      quantized: true,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
   }
   return extractor;
 }

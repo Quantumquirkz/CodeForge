@@ -24,7 +24,7 @@ router.post("/", async (req, res) => {
     if (chat) {
       await insertMessage(chat.id, null, "assistant", text, "assistant", new Date());
     }
-    res.json({ ok: true });
+    res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: "Send failed" });
   }
