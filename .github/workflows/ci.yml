@@ -1,0 +1,165 @@
+# CodeForge CI: lint and tests
+# Runs on push and pull_request to main
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-python:
+    name: Lint Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ruff and black
+        run: pip install ruff black
+
+      - name: Ruff (WhatsappBot)
+        run: ruff check WhatsappBot/src WhatsappBot/tests --output-format=github || true
+
+      - name: Black check (WhatsappBot)
+        run: black --check WhatsappBot/src WhatsappBot/tests || true
+
+      - name: Ruff (Veronica backend)
+        run: ruff check Veronica/backend/app Veronica/backend/tests --output-format=github || true
+
+      - name: Black check (Veronica backend)
+        run: black --check Veronica/backend/app Veronica/backend/tests || true
+
+      - name: Ruff (ChallengesDev Python)
+        run: ruff check ChallengesDev/Python --output-format=github || true
+
+      - name: Black check (ChallengesDev Python)
+        run: black --check ChallengesDev/Python || true
+
+  test-whatsapp-bot:
+    name: Tests WhatsappBot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          cd WhatsappBot && pip install -r requirements.txt pytest
+
+      - name: Run pytest
+        run: cd WhatsappBot && PYTHONPATH=src python -m pytest tests/ -v --tb=short
+
+  test-veronica:
+    name: Tests Veronica backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: cd Veronica/backend && pip install -r requirements.txt
+
+      - name: Run pytest
+        run: cd Veronica/backend && python -m pytest tests/ -v --tb=short
+
+  test-challenges-python:
+    name: Tests ChallengesDev Python
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        challenge:
+          - "001-lru-cache"
+          - "002-dijkstra-pathfinding"
+          - "003-trie-prefix-tree"
+          - "004-edit-distance"
+          - "005-sliding-window-maximum"
+          - "006-word-ladder"
+          - "007-serialize-deserialize-btree"
+          - "008-n-queens"
+          - "009-sudoku-solver"
+          - "010-bitcoin-mining-proof-of-work"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install pytest
+        run: pip install pytest
+
+      - name: Run challenge tests
+        run: |
+          cd "ChallengesDev/Python/${{ matrix.challenge }}"
+          python -m pytest test.py -v --tb=short 2>/dev/null || python test.py
+
+  lint-js:
+    name: Lint JS/TS frontends
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Lint WhatsAppAssistant frontend
+        run: |
+          cd WhatsAppAssistant/frontend && npm ci 2>/dev/null || npm install
+          npm run lint 2>/dev/null || true
+
+      - name: Lint Veronica frontend
+        run: |
+          cd Veronica/frontend && npm ci 2>/dev/null || npm install
+          npm run lint 2>/dev/null || true
+
+  dependency-scan:
+    name: Dependency scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: pip-audit (WhatsappBot)
+        run: |
+          pip install pip-audit
+          cd WhatsappBot && pip install -r requirements.txt -q && pip-audit -r requirements.txt || true
+
+      - name: pip-audit (Veronica backend)
+        run: |
+          pip install pip-audit
+          cd Veronica/backend && pip install -r requirements.txt -q && pip-audit -r requirements.txt || true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: npm audit (WhatsAppAssistant)
+        run: |
+          cd WhatsAppAssistant/backend && npm audit --audit-level=high || true
+          cd ../frontend && npm audit --audit-level=high || true
+
+      - name: npm audit (Veronica frontend)
+        run: cd Veronica/frontend && npm audit --audit-level=high || true
