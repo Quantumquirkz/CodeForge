@@ -14,6 +14,7 @@ Bot de WhatsApp que imita tu estilo de escritura usando Groq, RAG con pgvector y
 1. Clonar y entrar en el proyecto:
    ```bash
    cd WhatsAppAssistant
+   npm install
    ```
 
 2. Base de datos con Docker:
@@ -29,24 +30,17 @@ Bot de WhatsApp que imita tu estilo de escritura usando Groq, RAG con pgvector y
 
 4. Migraciones:
    ```bash
-   cd backend
-   npm install
-   npm run migrate:up
+   cd backend && npm run migrate:up
    ```
 
-5. Iniciar backend:
+5. Iniciar backend y frontend (un solo comando):
    ```bash
    npm run dev
    ```
+   - Backend: http://localhost:4000
+   - Frontend: http://localhost:5173 (proxy a `/api` en 4000)
 
-6. En otra terminal, frontend:
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-
-7. Abrir http://localhost:5173, ir a Dashboard y pulsar "Conectar (QR)" para escanear el código con WhatsApp.
+6. Abrir http://localhost:5173, ir a Dashboard y pulsar "Conectar (QR)" para escanear el código con WhatsApp.
 
 ## Despliegue en VPS (Docker + Nginx)
 
@@ -82,6 +76,7 @@ Bot de WhatsApp que imita tu estilo de escritura usando Groq, RAG con pgvector y
 
 - `backend/`: Node.js + TypeScript, Express, whatsapp-web.js, Groq, embeddings locales (Transformers.js + all-MiniLM-L6-v2), pgvector, cola Bull (Redis) o en memoria.
 - `frontend/`: React + Vite + Tailwind; proxy a `/api` en dev.
+- `shared/`: Contrato API (schema Zod, rutas) compartido entre frontend y backend.
 - `deploy/`: Ejemplo de configuración Nginx.
 
 ## RAG (Retrieval-Augmented Generation)
