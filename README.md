@@ -115,6 +115,10 @@ A collection of theoretical research, academic papers, algorithms analysis, and 
 
 This repository is part of my professional portfolio and is available for educational and demonstration purposes.
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to contribute and our [Code of Conduct](CODE_OF_CONDUCT.md). We use [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.
+
 ------
 
 Credit: [Taabannn](https://github.com/Taabannn)
