@@ -23,7 +23,13 @@ export function initReplyQueue(processor: (job: Bull.Job<ReplyJob>) => Promise<v
     },
   });
   replyQueue.process(processor);
-  replyQueue.on("failed", (job, err) => logger.error("Reply job %s failed: %o", job?.id, err));
+  replyQueue.on("failed", (job, err) => {
+    logger.error("Reply job %s failed after %d attempt(s): %o", job?.id, job?.attemptsMade ?? 0, err);
+    try {
+      const payloadHash = job?.data ? Buffer.from(JSON.stringify(job.data)).toString("base64").slice(0, 32) : "n/a";
+      logger.warn("Failed job details: id=%s payloadHash=%s error=%s", job?.id, payloadHash, err?.message);
+    } catch (_) { /* ignore */ }
+  });
 }
 
 export async function addReplyJob(job: ReplyJob): Promise<void> {

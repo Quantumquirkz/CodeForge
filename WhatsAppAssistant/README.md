@@ -65,7 +65,7 @@ Bot de WhatsApp que imita tu estilo de escritura usando Groq, RAG con pgvector y
    ```bash
    cd backend && npm run migrate:up
    ```
-   (Asegurar que `DATABASE_URL` esté disponible.)
+   (Asegurar que `DATABASE_URL` esté disponible.) **En producción, ejecuta `migrate:up` después de cada despliegue** (por ejemplo en el entrypoint del contenedor o en un paso de CI/CD).
 
 4. Build del frontend y servir con Nginx:
    ```bash
@@ -84,6 +84,17 @@ Bot de WhatsApp que imita tu estilo de escritura usando Groq, RAG con pgvector y
 - `frontend/`: React + Vite + Tailwind; proxy a `/api` en dev.
 - `deploy/`: Ejemplo de configuración Nginx.
 
+## RAG (Retrieval-Augmented Generation)
+
+El asistente usa **RAG** para imitar tu estilo de escritura:
+
+- **Embeddings**: Modelo local **Xenova/all-MiniLM-L6-v2** (384 dimensiones) vía Transformers.js; no se usa OpenAI.
+- **Almacenamiento**: PostgreSQL con la extensión **pgvector**. Los vectores de los mensajes del dueño se guardan en la tabla `message_embeddings`.
+- **Índice**: HNSW con distancia coseno para búsqueda aproximada de vecinos más cercanos.
+- **Flujo**: Antes de cada respuesta, se obtienen mensajes recientes del chat y se buscan en pgvector los mensajes del dueño más similares al mensaje actual; ese contexto se añade al prompt del LLM (Groq) para generar respuestas en tu estilo.
+
+Los embeddings de los mensajes del dueño se generan en segundo plano (job `embedOwnerMessages`) cuando se importan chats o se reciben mensajes.
+
 ## API (resumen)
 
 - `GET/POST /api/session` — Estado WhatsApp y QR.
@@ -100,3 +111,5 @@ Bot de WhatsApp que imita tu estilo de escritura usando Groq, RAG con pgvector y
 - Uso de whatsapp-web.js no oficial; revisar términos de uso de WhatsApp.
 - No commitear `.env`. Mantener secretos en el servidor.
 - Límites de tasa de Groq: la cola y los reintentos ayudan a evitar bloqueos.
+- **Migraciones**: Ejecutar `npm run migrate:up` en el backend tras cada despliegue para aplicar cambios de esquema.
+- **Backup**: En producción, configurar copias de seguridad de PostgreSQL (por ejemplo `pg_dump` programado o backups gestionados del proveedor).

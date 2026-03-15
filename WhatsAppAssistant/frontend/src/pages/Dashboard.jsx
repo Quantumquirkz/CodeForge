@@ -1,31 +1,32 @@
 import { useState, useEffect } from "react";
-import { getSession, startSession, getLogs } from "../api/client";
+import { getLogs } from "../api/client";
+import { useSession } from "../context/SessionContext";
 
 export default function Dashboard() {
-  const [session, setSession] = useState({ status: "disconnected", qr: null });
+  const { session, refreshSession, startSession, loading } = useSession();
   const [logs, setLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
       try {
-        const [s, l] = await Promise.all([getSession(), getLogs(30)]);
-        if (!cancelled) setSession(s), setLogs(l);
-      } finally {
-        if (!cancelled) setLoading(false);
+        await refreshSession();
+        const l = await getLogs(30);
+        if (!cancelled) setLogs(l);
+      } catch (err) {
+        if (!cancelled) setLogs([]);
       }
     }
     load();
     const t = setInterval(load, 5000);
     return () => { cancelled = true; clearInterval(t); };
-  }, []);
+  }, [refreshSession]);
 
   const handleStart = async () => {
     setStarting(true);
     try {
-      setSession(await startSession());
+      await startSession();
     } finally {
       setStarting(false);
     }
