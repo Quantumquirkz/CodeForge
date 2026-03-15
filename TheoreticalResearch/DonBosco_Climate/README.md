@@ -14,7 +14,7 @@ This project develops a comprehensive analysis of climate behavior in **Don Bosc
 ## 📁 Project Structure
 
 ```
-clima_don_bosco_andalucia/
+DonBosco_Climate/
 ├── config.py                 # Centralized configuration (Don Bosco location)
 ├── climate_data.py           # Data collection, cleaning, and analysis
 ├── visualization.py          # Graph and map generation
@@ -29,6 +29,14 @@ clima_don_bosco_andalucia/
 └── notebooks/                # Jupyter notebooks for analysis
 ```
 
+## Reproducibility
+
+- **Python**: 3.8 or higher.
+- **Install**: `pip install -r requirements.txt` (from this directory).
+- **Run full analysis**: `python main.py`.
+- **Notebooks**: Run Jupyter from this directory; see `notebooks/` for interactive analysis.
+- **Data**: Raw and processed data live under `data/raw` and `data/processed` (often gitignored). To obtain data from NOAA/ENSO, use the functions in `climate_data.py` or follow the data sources section below. For large datasets, consider [DVC](https://dvc.org/) for versioning.
+
 ## 🚀 Installation
 
 ### Prerequisites
@@ -40,7 +48,7 @@ clima_don_bosco_andalucia/
 
 1. **Navigate to the project folder**:
 ```bash
-cd TheoreticalResearch/clima_don_bosco_andalucia
+cd TheoreticalResearch/DonBosco_Climate
 ```
 
 2. **Create a virtual environment** (required to avoid system conflicts):

@@ -81,7 +81,7 @@ Or use a LaTeX editor like Overleaf, TeXstudio, or VS Code with LaTeX Workshop e
 
 ### Análisis Climático: Don Bosco, Villas de Andalucía
 
-**Directorio**: `clima_don_bosco_andalucia/`
+**Directorio**: `DonBosco_Climate/`
 
 Análisis exhaustivo del comportamiento climático en Don Bosco, Villas de Andalucía, Ciudad de Panamá, para el período 2000-2025. El proyecto incluye:
 
@@ -97,8 +97,8 @@ Análisis exhaustivo del comportamiento climático en Don Bosco, Villas de Andal
 TheoreticalResearch/
 ├── cryptographic_evaluation_model.tex    # Main research paper (cryptography)
 ├── advanced_tokenization_zkp_model.tex   # Advanced ZKP tokenization model
-├── clima_don_bosco_andalucia/            # Análisis climático Don Bosco
-│   ├── config.py                         # Configuración
+├── DonBosco_Climate/            # Análisis climático Don Bosco
+│   ├── config.py
 │   ├── clima_data.py                     # Procesamiento de datos
 │   ├── visualizacion.py                  # Visualización
 │   ├── main.py                           # Script principal
@@ -166,7 +166,7 @@ The research paper includes comprehensive references to:
 
 ## 🔧 Tools and Technologies
 
-- **LaTeX**: Document preparation system
+- **LaTeX**: Document preparation system. To compile papers: `pdflatex <file>.tex`, then `bibtex <file>`, then `pdflatex` twice. See each `.tex` file's directory; optionally use a CI job to compile and catch syntax errors.
 - **Mathematical Notation**: AMS packages for advanced mathematics
 - **Algorithm Specification**: Algorithmicx for pseudocode
 - **Diagrams**: TikZ and PGFPlots for figures
