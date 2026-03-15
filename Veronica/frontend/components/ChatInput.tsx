@@ -1,44 +1,62 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Send, Mic, Image as ImageIcon } from 'lucide-react';
-import styles from './ChatInput.module.css';
+import { useState, KeyboardEvent } from "react";
 
-interface ChatInputProps {
-    onSendMessage: (text: string) => void;
-    isStreaming: boolean;
-}
-
-export const ChatInput = ({ onSendMessage, isStreaming }: ChatInputProps) => {
-    const [input, setInput] = useState('');
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (input.trim() && !isStreaming) {
-            onSendMessage(input);
-            setInput('');
-        }
-    };
-
-    return (
-        <form className={`${styles.container} glass animate-fade-in`} onSubmit={handleSubmit}>
-            <button type="button" className={styles.iconBtn} title="Voice Command">
-                <Mic size={20} />
-            </button>
-            <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="How can I help you today, Sir?"
-                className={styles.input}
-                disabled={isStreaming}
-            />
-            <button type="button" className={styles.iconBtn} title="Analyze Image">
-                <ImageIcon size={20} />
-            </button>
-            <button type="submit" className={styles.sendBtn} disabled={!input.trim() || isStreaming}>
-                <Send size={20} />
-            </button>
-        </form>
-    );
+type Props = {
+  onSend: (text: string) => void;
+  disabled?: boolean;
 };
+
+export function ChatInput({ onSend, disabled }: Props) {
+  const [text, setText] = useState("");
+
+  const handleSend = () => {
+    const t = text.trim();
+    if (!t || disabled) return;
+    onSend(t);
+    setText("");
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  return (
+    <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Escribe un mensaje..."
+        disabled={disabled}
+        rows={2}
+        style={{
+          flex: 1,
+          padding: 12,
+          borderRadius: 8,
+          border: "1px solid #334155",
+          background: "#1e293b",
+          color: "#e2e8f0",
+          resize: "none",
+        }}
+      />
+      <button
+        onClick={handleSend}
+        disabled={disabled || !text.trim()}
+        style={{
+          padding: "12px 24px",
+          borderRadius: 8,
+          background: "#3b82f6",
+          color: "white",
+          border: "none",
+          cursor: disabled ? "not-allowed" : "pointer",
+        }}
+      >
+        Enviar
+      </button>
+    </div>
+  );
+}
