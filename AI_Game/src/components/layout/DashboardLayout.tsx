@@ -7,9 +7,10 @@ type DashboardLayoutProps = {
   left: ReactNode;
   center: ReactNode;
   right: ReactNode;
+  bottom?: ReactNode;
 };
 
-export function DashboardLayout({ header, summary, kpis, left, center, right }: DashboardLayoutProps) {
+export function DashboardLayout({ header, summary, kpis, left, center, right, bottom }: DashboardLayoutProps) {
   return (
     <div className="dashboard-shell">
       {header}
@@ -22,6 +23,7 @@ export function DashboardLayout({ header, summary, kpis, left, center, right }: 
         <section>{center}</section>
         <aside>{right}</aside>
       </main>
+      {bottom ? <section className="bottom-grid">{bottom}</section> : null}
     </div>
   );
 }

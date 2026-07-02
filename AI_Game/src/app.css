@@ -184,6 +184,10 @@
   background: var(--black);
 }
 
+.legend-dot--green {
+  background: #16a34a;
+}
+
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -224,6 +228,11 @@
   grid-template-columns: minmax(250px, 0.9fr) minmax(420px, 1.65fr) minmax(320px, 1.2fr);
   gap: 16px;
   align-items: start;
+}
+
+.left-stack {
+  display: grid;
+  gap: 16px;
 }
 
 .sidebar-card {
@@ -455,8 +464,25 @@
   gap: 16px;
 }
 
+.analytics-grid__top {
+  display: grid;
+  gap: 16px;
+}
+
+.analytics-grid__bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(220px, 0.7fr) minmax(0, 1.6fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.bottom-grid {
+  margin-top: 2px;
+}
+
 .analytics-card {
   padding: 16px;
+  min-width: 0;
 }
 
 .analytics-card__header {
@@ -593,6 +619,100 @@
   color: var(--muted);
 }
 
+.game-graph-card {
+  margin-top: 0;
+  padding: 22px;
+  background: var(--card);
+}
+
+.game-graph-card__chart {
+  margin-top: 14px;
+  min-height: 420px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: #fffdf8;
+  overflow: hidden;
+}
+
+.game-graph-card--large {
+  min-height: 780px;
+}
+
+.game-graph-card__chart--large {
+  min-height: 640px;
+}
+
+.game-graph-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.game-graph-card__header .analytics-card__headline {
+  margin-top: 6px;
+  font-size: clamp(1.55rem, 2vw, 2rem);
+}
+
+.game-graph-card__tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.game-graph-card__tab {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text);
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;
+}
+
+.game-graph-card__tab.is-active {
+  background: #fef7eb;
+  color: var(--accent-deep);
+  border-color: rgba(200, 137, 45, 0.38);
+}
+
+.game-graph-card__empty {
+  margin-top: 14px;
+  min-height: 360px;
+  border: 1px dashed rgba(200, 137, 45, 0.32);
+  border-radius: 20px;
+  background: #fffdf8;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 24px;
+  color: var(--muted);
+}
+
+.game-graph-card__empty span {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.game-graph-card__empty p {
+  margin: 0;
+  max-width: 32ch;
+  line-height: 1.55;
+}
+
+.game-graph-card__caption {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+  line-height: 1.55;
+  max-width: 90ch;
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -644,6 +764,20 @@
 
 .analytics-card--log {
   min-height: 260px;
+  display: grid;
+  gap: 14px;
+}
+
+.board-panel-card + .analytics-card--log {
+  margin-top: 16px;
+}
+
+.analytics-grid__bottom .analytics-card {
+  height: 100%;
+}
+
+.analytics-grid__bottom .analytics-card--log {
+  min-height: 0;
 }
 
 .empty-log {
@@ -660,21 +794,67 @@
   color: rgba(100, 116, 139, 0.45);
 }
 
-.move-log {
-  margin: 14px 0 0;
-  padding-left: 18px;
-  display: grid;
+.move-log__header-actions {
+  display: flex;
   gap: 10px;
+  align-items: center;
 }
 
-.move-log li {
-  display: grid;
-  gap: 4px;
+.move-log-table__wrap {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: auto;
+  max-height: 360px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(250, 247, 240, 0.96));
 }
 
-.move-log span {
+.move-log-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.move-log-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #fdfaf4;
   color: var(--muted);
-  font-size: 0.86rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.move-log-table tbody td {
+  padding: 13px 14px;
+  border-bottom: 1px solid rgba(232, 221, 204, 0.7);
+  color: var(--muted);
+  vertical-align: top;
+}
+
+.move-log-table tbody tr:hover {
+  background: rgba(200, 137, 45, 0.05);
+}
+
+.move-log-table__row--latest {
+  background: rgba(22, 163, 74, 0.06);
+}
+
+.move-log-table__notation {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.move-log-table__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 0.92rem;
 }
 
 .text-red {
@@ -706,6 +886,14 @@
     grid-template-columns: 1fr;
   }
 
+  .left-stack {
+    gap: 16px;
+  }
+
+  .analytics-grid__bottom {
+    grid-template-columns: 1fr;
+  }
+
   .header-actions {
     justify-content: flex-start;
   }
@@ -721,6 +909,14 @@
   }
 
   .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .left-stack {
+    gap: 16px;
+  }
+
+  .analytics-grid__bottom {
     grid-template-columns: 1fr;
   }
 
@@ -762,4 +958,96 @@
   .analytics-card__header {
     align-items: flex-start;
   }
+}
+
+
+/* ── Fin de partida (banner de ganador / empate) ─────────────── */
+.winner-banner {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 30;
+  max-width: min(460px, calc(100vw - 32px));
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.16);
+  backdrop-filter: blur(10px);
+  animation: winner-pop 320ms ease-out;
+}
+@keyframes winner-pop {
+  from { transform: scale(0.96); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.winner-banner--red {
+  background: linear-gradient(135deg, rgba(214, 69, 65, 0.16), rgba(214, 69, 65, 0.05));
+  border-color: rgba(214, 69, 65, 0.45);
+}
+.winner-banner--black {
+  background: linear-gradient(135deg, rgba(40, 42, 54, 0.22), rgba(40, 42, 54, 0.08));
+  border-color: rgba(40, 42, 54, 0.5);
+}
+.winner-banner--draw {
+  background: linear-gradient(135deg, rgba(120, 120, 130, 0.16), rgba(120, 120, 130, 0.05));
+  border-color: rgba(120, 120, 130, 0.4);
+}
+.winner-banner__trophy { font-size: 30px; line-height: 1; }
+.winner-banner__text { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.winner-banner__title { font-size: 18px; }
+.winner-banner__reason { font-size: 12.5px; opacity: 0.75; }
+
+@media (max-width: 720px) {
+  .winner-banner {
+    top: 14px;
+    right: 14px;
+    left: 14px;
+    max-width: none;
+  }
+}
+
+/* ── Indicador de IA pensando ────────────────────────────────── */
+.ai-thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  opacity: 0.8;
+  margin-bottom: 8px;
+}
+.ai-thinking__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: ai-pulse 900ms ease-in-out infinite;
+}
+@keyframes ai-pulse {
+  0%, 100% { transform: scale(0.7); opacity: 0.4; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+/* ── Gráfica heurística mejorada ─────────────────────────────── */
+.chart-svg--full { width: 100%; height: auto; display: block; }
+.chart-tick-label {
+  font-size: 7px;
+  fill: currentColor;
+  opacity: 0.45;
+}
+.chart-zero-line {
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.35;
+  stroke-dasharray: 4 3;
+}
+.chart-area { opacity: 0.10; }
+.chart-area--red { fill: #d64541; }
+.chart-area--black { fill: #282a36; }
+.chart-caption {
+  font-size: 11px;
+  opacity: 0.6;
+  margin-top: 6px;
+  text-align: center;
 }

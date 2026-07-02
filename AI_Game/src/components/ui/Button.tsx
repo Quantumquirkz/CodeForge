@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 type ButtonProps = {
-  children: ReactNode;
+  children?: ReactNode;
   icon?: ReactNode;
   variant?: "primary" | "secondary" | "ghost";
   onClick?: () => void;

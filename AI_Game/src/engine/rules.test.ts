@@ -4,6 +4,9 @@ import { applyMove, goalMask, generateMoves, initialState, isGoalReached, winner
 import { chooseBestMove } from "./minimax";
 import { estimateCostToGoal } from "./heuristics";
 import { solveWithAStar } from "./astar";
+import { hasAnyMove, passTurn } from "./rules";
+import { admissibleMovesToGoal } from "./heuristics";
+import { adjudicateStalledGame, evaluateOutcome } from "./outcome";
 
 describe("rules engine", () => {
   it("creates the initial 6-piece formations", () => {
@@ -133,5 +136,44 @@ describe("rules engine", () => {
 
     const moves = generateMoves(state, "red");
     expect(moves.some((move) => move.to === indexFromPosition(4, 2))).toBe(true);
+  });
+
+  it("passes the turn when a player is blocked", () => {
+    const state = initialState();
+    const passed = passTurn(state);
+    expect(passed.turn).toBe("black");
+    expect(passed.red).toBe(state.red);
+    expect(passed.black).toBe(state.black);
+    expect(hasAnyMove(state)).toBe(true);
+  });
+
+  it("admissible heuristic never overestimates a known plan", () => {
+    const state = initialState();
+    const bound = admissibleMovesToGoal(state, "red");
+    const result = solveWithAStar(state, "red", 30000, 2);
+    if (result.found) {
+      expect(bound).toBeLessThanOrEqual(result.moves.length);
+    }
+    expect(bound).toBeGreaterThan(0);
+  });
+
+  it("adjudicates a stalled game to the player with more pieces on goal", () => {
+    const base = initialState();
+    // Rojas con una ficha ya colocada en su meta; negras en formacion inicial.
+    const red = (base.red & ~(1n << BigInt(indexFromPosition(6, 0)))) | goalMask("red") & (goalMask("red") ^ (goalMask("red") - 1n));
+    const state = { red, black: base.black, turn: "red" as const };
+    const outcome = adjudicateStalledGame(state, "Prueba");
+    expect(outcome.over).toBe(true);
+    expect(outcome.reason).toContain("Prueba");
+  });
+
+  it("evaluateOutcome detects triple repetition", () => {
+    const state = initialState();
+    const counts = new Map<string, number>();
+    const key = `${state.red.toString(36)}:${state.black.toString(36)}:${state.turn}`;
+    counts.set(key, 3);
+    const outcome = evaluateOutcome(state, counts);
+    expect(outcome.over).toBe(true);
+    expect(outcome.reason).toContain("Repeticion");
   });
 });

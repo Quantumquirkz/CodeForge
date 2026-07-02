@@ -8,11 +8,13 @@ import { BoardPanel } from "./components/dashboard/BoardPanel";
 import { PositionReadingCard } from "./components/dashboard/PositionReadingCard";
 import { HeuristicChartCard } from "./components/dashboard/HeuristicChartCard";
 import { EngineAnalysisCard } from "./components/dashboard/EngineAnalysisCard";
-import { AStarPlanCard } from "./components/dashboard/AStarPlanCard";
+import { GameStateGraphCard } from "./components/dashboard/GameStateGraphCard";
 import { CurrentModeCard } from "./components/dashboard/CurrentModeCard";
 import { MoveLogCard } from "./components/dashboard/MoveLogCard";
+import { WinnerBanner } from "./components/dashboard/WinnerBanner";
 import { Icon } from "./components/ui/Icon";
 import { useGameState } from "./hooks/useGameState";
+import type { GameMode, PlayerColor, Strategy } from "./types/game";
 
 function App() {
   const game = useGameState();
@@ -25,6 +27,13 @@ function App() {
 
   const chartRedSeries = game.heuristicHistory.map(([r]) => r);
   const chartBlackSeries = game.heuristicHistory.map(([, b]) => b);
+  const graphVisible =
+    game.autoPlayActive ||
+    game.aiThinking ||
+    game.moveLog.length > 0 ||
+    game.plannedMoves.length > 0 ||
+    game.heuristicHistory.length > 0 ||
+    Boolean(game.outcome);
 
   const kpis = (
     <div className="kpi-grid">
@@ -46,40 +55,37 @@ function App() {
         description="Evaluación del motor"
         icon={<Icon name="spark" className="icon icon--accent" />}
       />
-      <KpiCard
-        label="Ruta planificada"
-        value={String(game.plannedRoute.length)}
-        description="Pasos pendientes"
-        icon={<Icon name="flag" className="icon icon--accent" />}
-      />
     </div>
   );
 
   const rightPanel = (
     <div className="analytics-grid">
-      <PositionReadingCard
-        turn={currentTurnLabel}
-        redLegalMoves={game.redLegalMoves}
-        blackLegalMoves={game.blackLegalMoves}
-        redCost={game.redCost}
-        blackCost={game.blackCost}
-      />
-      <HeuristicChartCard red={chartRedSeries} black={chartBlackSeries} />
-      <EngineAnalysisCard
-        redCost={game.redCost}
-        blackCost={game.blackCost}
-        engineMessage={game.engineMessage}
-        searchStatus={game.searchStatus}
-      />
-      <AStarPlanCard
-        steps={game.plannedSteps}
-        expandedNodes={game.plannedExpandedNodes}
-        searchDuration={game.plannedSearchDuration}
-        searchReason={game.plannedSearchReason}
-      />
+      <div className="analytics-grid__top">
+        <PositionReadingCard
+          turn={currentTurnLabel}
+          redLegalMoves={game.redLegalMoves}
+          blackLegalMoves={game.blackLegalMoves}
+          redCost={game.redCost}
+          blackCost={game.blackCost}
+        />
+        <HeuristicChartCard red={chartRedSeries} black={chartBlackSeries} />
+      </div>
       <CurrentModeCard text={currentModeLabel} />
-      <MoveLogCard moveLog={game.moveLog} />
     </div>
+  );
+
+  const bottomPanel = (
+    <GameStateGraphCard
+      active={graphVisible}
+      treeDataGeneral={game.decisionTreeGeneral}
+      treeDataRed={game.decisionTreeRed}
+      treeDataBlack={game.decisionTreeBlack}
+      aiThinking={game.aiThinking}
+      searchStatus={game.searchStatus}
+      plannedExpandedNodes={game.plannedExpandedNodes}
+      plannedSearchDuration={game.plannedSearchDuration}
+      outcome={game.outcome}
+    />
   );
 
   return (
@@ -88,30 +94,48 @@ function App() {
       summary={<MatchSummaryCard currentTurnLabel={currentTurnLabel} winnerLabel={winnerLabel} message={game.summaryMessage} />}
       kpis={kpis}
       left={
-        <ControlSidebar
-          mode={game.mode}
-          humanColor={game.humanColor}
-          strategy={game.strategy}
-          gameOver={Boolean(game.winner)}
-          autoPlayActive={game.autoPlayActive}
-          onModeChange={game.setMode}
-          onHumanColorChange={game.setHumanColor}
-          onStrategyChange={game.setStrategy}
-          onReset={game.resetGame}
-          onAnalyze={game.analyzeWithAStar}
-          onAdvance={game.advancePlan}
-          onPlayAi={game.playAiMove}
-        />
+        <div className="left-stack">
+          <ControlSidebar
+            mode={game.mode}
+            humanColor={game.humanColor}
+            strategy={game.strategy}
+            gameOver={Boolean(game.winner)}
+            autoPlayActive={game.autoPlayActive}
+            onModeChange={(value) => game.setMode(value as GameMode)}
+            onHumanColorChange={(value) => game.setHumanColor(value as PlayerColor)}
+            onStrategyChange={(value) => game.setStrategy(value as Strategy)}
+            onReset={game.resetGame}
+            onAnalyze={game.analyzeWithAStar}
+            onAdvance={game.advancePlan}
+            onPlayAi={game.playAiMove}
+          />
+          <EngineAnalysisCard
+            redCost={game.redCost}
+            blackCost={game.blackCost}
+            engineMessage={game.engineMessage}
+            searchStatus={game.searchStatus}
+          />
+        </div>
       }
       center={
-        <BoardPanel
-          pieces={game.pieces}
-          selectedPieceId={game.selectedPieceId}
-          legalMoves={game.legalMoves}
-          onSelectSquare={game.selectSquare}
-        />
+        <>
+          <WinnerBanner outcome={game.outcome} onReset={game.resetGame} />
+          {game.aiThinking && !game.outcome?.over && (
+            <div className="ai-thinking" role="status">
+              <span className="ai-thinking__dot" /> La IA está pensando…
+            </div>
+          )}
+          <BoardPanel
+            pieces={game.pieces}
+            selectedPieceId={game.selectedPieceId}
+            legalMoves={game.legalMoves}
+            onSelectSquare={game.selectSquare}
+          />
+          <MoveLogCard moveLog={game.moveLog} />
+        </>
       }
       right={rightPanel}
+      bottom={bottomPanel}
     />
   );
 }

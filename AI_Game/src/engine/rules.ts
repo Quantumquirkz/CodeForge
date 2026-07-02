@@ -7,6 +7,7 @@ import {
   inBounds,
   indicesFromMask,
   maskFromIndices,
+  mirroredIndex,
   positionFromIndex,
   removeCell,
   stateKey
@@ -39,11 +40,6 @@ export function initialState(): GameState {
     black: maskFromIndices(START_FORMATION.map((cell) => mirroredIndex(cell))),
     turn: "red"
   };
-}
-
-export function mirroredIndex(index: CellIndex): CellIndex {
-  const { row, col } = positionFromIndex(index);
-  return indexFromPosition(7 - row, 7 - col);
 }
 
 export function goalCells(player: Player): CellIndex[] {
@@ -233,6 +229,19 @@ export function applyMove(state: GameState, move: Move): GameState {
   return move.player === "red"
     ? { red: nextOwn, black: state.black, turn: otherPlayer(move.player) }
     : { red: state.red, black: nextOwn, turn: otherPlayer(move.player) };
+}
+
+/** Indica si el jugador tiene al menos una jugada legal. */
+export function hasAnyMove(state: GameState, player: Player = state.turn): boolean {
+  return generateMoves(state, player).length > 0;
+}
+
+/**
+ * Pasa el turno sin mover (se usa cuando el jugador al turno no tiene
+ * jugadas legales; en un juego de solo saltos puede quedarse bloqueado).
+ */
+export function passTurn(state: GameState): GameState {
+  return { red: state.red, black: state.black, turn: otherPlayer(state.turn) };
 }
 
 export function boardOccupancy(state: GameState): bigint {

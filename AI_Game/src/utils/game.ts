@@ -124,6 +124,37 @@ export function createMoveRecord(
   };
 }
 
+function escapeCsv(value: string): string {
+  if (/[",\n\r;]/.test(value)) {
+    return `"${value.replaceAll('"', '""')}"`;
+  }
+  return value;
+}
+
+export function moveLogToCsv(moveLog: MoveRecord[]): string {
+  const header = [
+    "id",
+    "color",
+    "from",
+    "to",
+    "notation",
+    "timestamp"
+  ];
+
+  const rows = moveLog.map((record) => [
+    record.id,
+    record.color === "red" ? "Rojo" : "Negro",
+    squareToNotation(record.from),
+    squareToNotation(record.to),
+    record.notation,
+    record.timestamp
+  ]);
+
+  return [header, ...rows]
+    .map((row) => row.map((cell) => escapeCsv(cell)).join(","))
+    .join("\n");
+}
+
 export function initialPieces(): Piece[] {
   return engineStateToPieces(initialState());
 }
