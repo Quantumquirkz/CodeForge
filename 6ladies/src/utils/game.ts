@@ -1,7 +1,7 @@
 import { indexFromPosition, positionFromIndex, indicesFromMask, addCell } from "../engine/board";
 import { generateMoves, initialState } from "../engine/rules";
 import type { GameState, CellIndex, Move } from "../engine/types";
-import { BOARD_SIZE, COLUMN_LABELS } from "../data/mockGame";
+import { BOARD_SIZE, COLUMN_LABELS } from "../data/boardConstants";
 import type { BoardSquare, MoveRecord, Piece, PlayerColor } from "../types/game";
 
 const RED_IDS = ["r1", "r2", "r3", "r4", "r5", "r6"] as const;

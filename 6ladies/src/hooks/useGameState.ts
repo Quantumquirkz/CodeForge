@@ -220,6 +220,7 @@ export function useGameState(): HookGameState {
      alimenta la penalización anti-ciclos de Minimax. Se usa una ref porque
      es un acumulador de la partida, no estado visual. */
   const positionCounts = useRef<Map<string, number>>(new Map());
+  const aiTimeoutRef = useRef<number | null>(null);
 
   /* ── Reset / cambio de modo ─────────────────────────────── */
 
@@ -558,20 +559,29 @@ export function useGameState(): HookGameState {
       return;
     }
     setAiThinking(true);
+    if (aiTimeoutRef.current !== null) {
+      window.clearTimeout(aiTimeoutRef.current);
+    }
     const delay = mode === "ai-vs-ai" ? AUTOPLAY_DELAY_MS : AI_DELAY_MS;
-    const timeoutId = window.setTimeout(() => {
+    aiTimeoutRef.current = window.setTimeout(() => {
       const moveState = piecesToEngineState(pieces, currentTurn);
       const { move, status, message } = computeAiMove(moveState);
       setSearchStatus(status);
       setEngineMessage(message);
       setAiThinking(false);
+      aiTimeoutRef.current = null;
       if (!move) {
         setAutoPlayActive(false);
         return;
       }
       movePiece(move);
     }, delay);
-    return () => window.clearTimeout(timeoutId);
+    return () => {
+      if (aiTimeoutRef.current !== null) {
+        window.clearTimeout(aiTimeoutRef.current);
+        aiTimeoutRef.current = null;
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [aiShouldMove, pieces, currentTurn, mode, computeAiMove]);
 
@@ -579,6 +589,10 @@ export function useGameState(): HookGameState {
 
   function resetGame(): void {
     positionCounts.current = new Map();
+    if (aiTimeoutRef.current !== null) {
+      window.clearTimeout(aiTimeoutRef.current);
+      aiTimeoutRef.current = null;
+    }
     setCurrentTurn("red");
     setPieces(initialPieces());
     clearSelection();
@@ -627,10 +641,15 @@ export function useGameState(): HookGameState {
 
     if (piece && piece.color === currentTurn) {
       setSelectedPieceId(piece.id);
-      setLegalMoves(generateLegalMovesForPiece(piece, pieces, currentTurn));
+      const moves = generateLegalMovesForPiece(piece, pieces, currentTurn);
+      setLegalMoves(moves);
       seedTreeForCurrentPosition(gameState, "general");
       seedTreeForCurrentPosition(gameState, colorScope(currentTurn));
-      setSummaryMessage(`Ficha ${piece.color === "red" ? "roja" : "negra"} en ${squareToNotation(square)} seleccionada.`);
+      setSummaryMessage(
+        moves.length > 0
+          ? `Ficha ${piece.color === "red" ? "roja" : "negra"} en ${squareToNotation(square)} seleccionada.`
+          : `La ficha ${piece.color === "red" ? "roja" : "negra"} en ${squareToNotation(square)} no tiene jugadas legales. Prueba otra.`
+      );
       return;
     }
 
@@ -707,17 +726,34 @@ export function useGameState(): HookGameState {
       setEngineMessage("La partida ya terminó.");
       return;
     }
+    if (aiThinking) {
+      setEngineMessage("La IA ya está pensando su jugada.");
+      return;
+    }
     if (mode === "ai-vs-ai") {
-      setAutoPlayActive((active) => !active);
-      setEngineMessage(autoPlayActive ? "Partida automática en pausa." : "IA vs IA en ejecución automática.");
+      const nextActive = !autoPlayActive;
+      setAutoPlayActive(nextActive);
+      setEngineMessage(nextActive ? "IA vs IA en ejecución automática." : "Partida automática en pausa.");
       return;
     }
     if (currentTurn !== aiColor) {
-      setEngineMessage("Es el turno del humano; la IA responderá sola tras tu jugada.");
+      setEngineMessage("La IA solo puede mover cuando le toca.");
       return;
     }
-    /* En Humano vs IA la IA juega sola; este botón queda como refuerzo manual. */
-  }, [gameOver, mode, currentTurn, aiColor, autoPlayActive]);
+
+    if (aiTimeoutRef.current !== null) {
+      window.clearTimeout(aiTimeoutRef.current);
+      aiTimeoutRef.current = null;
+    }
+
+    const moveState = piecesToEngineState(pieces, currentTurn);
+    const { move, status, message } = computeAiMove(moveState);
+    setSearchStatus(status);
+    setEngineMessage(message);
+    if (move) {
+      movePiece(move);
+    }
+  }, [gameOver, aiThinking, mode, currentTurn, aiColor, autoPlayActive, pieces, computeAiMove]);
 
   /* ── return ──────────────────────────────────────────────── */
 

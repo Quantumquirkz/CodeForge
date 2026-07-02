@@ -1,9 +1,6 @@
 import type { Piece } from "../types/game";
 import { initialPieces as engineInitialPieces } from "../utils/game";
-
-export const BOARD_SIZE = 8;
-
-export const COLUMN_LABELS = ["a", "b", "c", "d", "e", "f", "g", "h"] as const;
+export { BOARD_SIZE, COLUMN_LABELS } from "./boardConstants";
 
 export const INITIAL_PIECES: Piece[] = engineInitialPieces();
 
