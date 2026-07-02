@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "./app.css";
 import { DashboardLayout } from "./components/layout/DashboardLayout";
 import { Header } from "./components/dashboard/Header";
@@ -16,14 +17,19 @@ import { Icon } from "./components/ui/Icon";
 import { useGameState } from "./hooks/useGameState";
 import type { GameMode, PlayerColor, Strategy } from "./types/game";
 
+type DashboardSection = "board" | "heuristic" | "adversarial";
+
 function App() {
   const game = useGameState();
+  const [themeMode, setThemeMode] = useState<"light" | "dark">("light");
+  const [activeTab, setActiveTab] = useState<DashboardSection>("board");
   const currentTurnLabel = game.currentTurn === "red" ? "Rojo" : "Negro";
   const winnerLabel = game.winner ? (game.winner === "red" ? "Rojo" : "Negro") : null;
   const currentModeLabel =
     game.mode === "human-vs-ai"
       ? `Humano vs IA (${game.humanColor === "red" ? "Rojo" : "Negro"})`
       : "IA vs IA";
+  const gameOver = Boolean(game.outcome?.over);
 
   const chartRedSeries = game.heuristicHistory.map(([r]) => r);
   const chartBlackSeries = game.heuristicHistory.map(([, b]) => b);
@@ -34,6 +40,24 @@ function App() {
     game.plannedMoves.length > 0 ||
     game.heuristicHistory.length > 0 ||
     Boolean(game.outcome);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = themeMode;
+  }, [themeMode]);
+
+  function scrollToSection(section: DashboardSection): void {
+    const sectionId = {
+      board: "board-section",
+      heuristic: "heuristic-section",
+      adversarial: "adversarial-section"
+    }[section];
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setActiveTab(section);
+  }
+
+  function toggleTheme(): void {
+    setThemeMode((current) => (current === "light" ? "dark" : "light"));
+  }
 
   const kpis = (
     <div className="kpi-grid">
@@ -90,7 +114,15 @@ function App() {
 
   return (
     <DashboardLayout
-      header={<Header />}
+      header={
+        <Header
+          activeTab={activeTab}
+          onTabChange={scrollToSection}
+          onToggleTheme={toggleTheme}
+          onHelp={() => scrollToSection("board")}
+          themeMode={themeMode}
+        />
+      }
       summary={<MatchSummaryCard currentTurnLabel={currentTurnLabel} winnerLabel={winnerLabel} message={game.summaryMessage} />}
       kpis={kpis}
       left={
@@ -99,8 +131,9 @@ function App() {
             mode={game.mode}
             humanColor={game.humanColor}
             strategy={game.strategy}
-            gameOver={Boolean(game.winner)}
+            gameOver={gameOver}
             autoPlayActive={game.autoPlayActive}
+            aiThinking={game.aiThinking}
             onModeChange={(value) => game.setMode(value as GameMode)}
             onHumanColorChange={(value) => game.setHumanColor(value as PlayerColor)}
             onStrategyChange={(value) => game.setStrategy(value as Strategy)}
@@ -118,7 +151,7 @@ function App() {
         </div>
       }
       center={
-        <>
+        <div id="board-section">
           <WinnerBanner outcome={game.outcome} onReset={game.resetGame} />
           {game.aiThinking && !game.outcome?.over && (
             <div className="ai-thinking" role="status">
@@ -132,10 +165,10 @@ function App() {
             onSelectSquare={game.selectSquare}
           />
           <MoveLogCard moveLog={game.moveLog} />
-        </>
+        </div>
       }
-      right={rightPanel}
-      bottom={bottomPanel}
+      right={<div id="heuristic-section">{rightPanel}</div>}
+      bottom={<div id="adversarial-section">{bottomPanel}</div>}
     />
   );
 }

@@ -9,6 +9,7 @@ type ControlSidebarProps = {
   strategy: Strategy;
   gameOver: boolean;
   autoPlayActive: boolean;
+  aiThinking: boolean;
   onModeChange: (value: string) => void;
   onHumanColorChange: (value: string) => void;
   onStrategyChange: (value: string) => void;
@@ -47,7 +48,7 @@ export function ControlSidebar(props: ControlSidebarProps) {
             variant="secondary"
             icon={<Icon name="bot" className="icon" />}
             onClick={props.onPlayAi}
-            disabled={props.gameOver}
+            disabled={props.gameOver || props.aiThinking}
           >
             {props.autoPlayActive ? "IA en marcha" : "Jugar IA"}
           </Button>

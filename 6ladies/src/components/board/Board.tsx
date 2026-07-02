@@ -1,4 +1,4 @@
-import { BOARD_SIZE, COLUMN_LABELS } from "../../data/mockGame";
+import { BOARD_SIZE, COLUMN_LABELS } from "../../data/boardConstants";
 import type { BoardSquare, Piece as PieceType } from "../../types/game";
 import type { Move } from "../../engine/types";
 import { squareKey } from "../../utils/game";

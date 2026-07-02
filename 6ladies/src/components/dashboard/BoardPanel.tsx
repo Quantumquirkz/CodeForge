@@ -1,5 +1,6 @@
 import type { BoardSquare, Piece } from "../../types/game";
 import type { Move } from "../../engine/types";
+import { engineIndexToBoardSquare, squareToNotation } from "../../utils/game";
 import { Board } from "../board/Board";
 import { Icon } from "../ui/Icon";
 
@@ -11,6 +12,10 @@ type BoardPanelProps = {
 };
 
 export function BoardPanel({ pieces, selectedPieceId, legalMoves, onSelectSquare }: BoardPanelProps) {
+  const previewSquares = legalMoves
+    .map((move) => squareToNotation(engineIndexToBoardSquare(move.to)))
+    .sort();
+
   return (
     <section className="board-panel-card">
       <div className="board-panel-card__header">
@@ -24,7 +29,13 @@ export function BoardPanel({ pieces, selectedPieceId, legalMoves, onSelectSquare
       />
       <div className="board-help">
         <Icon name="lightbulb" className="icon icon--accent" />
-        <span>Selecciona una ficha y luego una casilla resaltada para ver las jugadas disponibles.</span>
+        <span>
+          {selectedPieceId
+            ? legalMoves.length > 0
+              ? `Movimientos disponibles: ${previewSquares.join(", ")}.`
+              : "La ficha seleccionada no tiene jugadas legales."
+            : "Selecciona una ficha para ver sus jugadas disponibles."}
+        </span>
       </div>
     </section>
   );
