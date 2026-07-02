@@ -17,6 +17,7 @@ import { useGameState } from "./hooks/useGameState";
 function App() {
   const game = useGameState();
   const currentTurnLabel = game.currentTurn === "red" ? "Rojo" : "Negro";
+  const winnerLabel = game.winner ? (game.winner === "red" ? "Rojo" : "Negro") : null;
   const currentModeLabel =
     game.mode === "human-vs-ai"
       ? `Humano vs IA (${game.humanColor === "red" ? "Rojo" : "Negro"})`
@@ -84,13 +85,15 @@ function App() {
   return (
     <DashboardLayout
       header={<Header />}
-      summary={<MatchSummaryCard currentTurnLabel={currentTurnLabel} message={game.summaryMessage} />}
+      summary={<MatchSummaryCard currentTurnLabel={currentTurnLabel} winnerLabel={winnerLabel} message={game.summaryMessage} />}
       kpis={kpis}
       left={
         <ControlSidebar
           mode={game.mode}
           humanColor={game.humanColor}
           strategy={game.strategy}
+          gameOver={Boolean(game.winner)}
+          autoPlayActive={game.autoPlayActive}
           onModeChange={game.setMode}
           onHumanColorChange={game.setHumanColor}
           onStrategyChange={game.setStrategy}

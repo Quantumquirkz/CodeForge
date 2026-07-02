@@ -7,6 +7,8 @@ type ControlSidebarProps = {
   mode: GameMode;
   humanColor: PlayerColor;
   strategy: Strategy;
+  gameOver: boolean;
+  autoPlayActive: boolean;
   onModeChange: (value: string) => void;
   onHumanColorChange: (value: string) => void;
   onStrategyChange: (value: string) => void;
@@ -25,14 +27,29 @@ export function ControlSidebar(props: ControlSidebarProps) {
           <Button variant="primary" icon={<Icon name="refresh" className="icon" />} onClick={props.onReset}>
             Reiniciar partida
           </Button>
-          <Button variant="secondary" icon={<Icon name="spark" className="icon" />} onClick={props.onAnalyze}>
+          <Button
+            variant="secondary"
+            icon={<Icon name="spark" className="icon" />}
+            onClick={props.onAnalyze}
+            disabled={props.gameOver}
+          >
             Analizar con A*
           </Button>
-          <Button variant="secondary" icon={<Icon name="play" className="icon" />} onClick={props.onAdvance}>
+          <Button
+            variant="secondary"
+            icon={<Icon name="play" className="icon" />}
+            onClick={props.onAdvance}
+            disabled={props.gameOver}
+          >
             Avanzar plan
           </Button>
-          <Button variant="secondary" icon={<Icon name="bot" className="icon" />} onClick={props.onPlayAi}>
-            Jugar IA
+          <Button
+            variant="secondary"
+            icon={<Icon name="bot" className="icon" />}
+            onClick={props.onPlayAi}
+            disabled={props.gameOver}
+          >
+            {props.autoPlayActive ? "IA en marcha" : "Jugar IA"}
           </Button>
         </div>
       </section>

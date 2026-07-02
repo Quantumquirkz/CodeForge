@@ -2,16 +2,17 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { solveWithAStar } from "../engine/astar";
 import { evaluateState } from "../engine/heuristics";
 import { chooseBestMove } from "../engine/minimax";
+import { winner as engineWinner } from "../engine/rules";
 import type { Move } from "../engine/types";
 import type { BoardSquare, GameMode, MoveRecord, Piece, PlayerColor, Strategy } from "../types/game";
 import {
   countLegalMovesForColor,
   createMoveRecord,
+  boardSquareToEngineIndex,
   engineIndexToBoardSquare,
   generateLegalMovesForPiece,
   getPieceAt,
   initialPieces,
-  isSameSquare,
   piecesToEngineState,
   squareToNotation
 } from "../utils/game";
@@ -20,7 +21,8 @@ type HookGameState = {
   currentTurn: PlayerColor;
   pieces: Piece[];
   selectedPieceId: string | null;
-  legalMoves: BoardSquare[];
+  legalMoves: Move[];
+  winner: PlayerColor | null;
   moveLog: MoveRecord[];
   plannedRoute: BoardSquare[];
   plannedMoves: Move[];
@@ -39,6 +41,7 @@ type HookGameState = {
   plannedExpandedNodes: number;
   plannedSearchDuration: number | null;
   plannedSearchReason: string | null;
+  autoPlayActive: boolean;
   setMode: (mode: GameMode) => void;
   setHumanColor: (color: PlayerColor) => void;
   setStrategy: (strategy: Strategy) => void;
@@ -53,7 +56,7 @@ export function useGameState(): HookGameState {
   const [currentTurn, setCurrentTurn] = useState<PlayerColor>("red");
   const [pieces, setPieces] = useState<Piece[]>(() => initialPieces());
   const [selectedPieceId, setSelectedPieceId] = useState<string | null>(null);
-  const [legalMoves, setLegalMoves] = useState<BoardSquare[]>([]);
+  const [legalMoves, setLegalMoves] = useState<Move[]>([]);
   const [moveLog, setMoveLog] = useState<MoveRecord[]>([]);
   const [plannedMoves, setPlannedMoves] = useState<Move[]>([]);
   const [mode, setMode] = useState<GameMode>("human-vs-ai");
@@ -65,6 +68,10 @@ export function useGameState(): HookGameState {
   const [engineMessage, setEngineMessage] = useState("Listo para analizar.");
   const [searchStatus, setSearchStatus] = useState("Sin búsquedas aún.");
   const [heuristicHistory, setHeuristicHistory] = useState<[number, number][]>([]);
+  const [plannedExpandedNodes, setPlannedExpandedNodes] = useState(0);
+  const [plannedSearchDuration, setPlannedSearchDuration] = useState<number | null>(null);
+  const [plannedSearchReason, setPlannedSearchReason] = useState<string | null>(null);
+  const [autoPlayActive, setAutoPlayActive] = useState(false);
 
   /* ── Reset / mode switch ─────────────────────────────────── */
 
@@ -74,10 +81,14 @@ export function useGameState(): HookGameState {
     } else {
       setCurrentTurn("red");
     }
+    setAutoPlayActive(false);
     clearSelection();
   }, [mode, humanColor]);
 
   /* ── Derived values ──────────────────────────────────────── */
+
+  const gameState = useMemo(() => piecesToEngineState(pieces, currentTurn), [pieces, currentTurn]);
+  const winner = useMemo(() => engineWinner(gameState), [gameState]);
 
   const plannedRoute = useMemo(
     () => plannedMoves.map((move) => engineIndexToBoardSquare(move.to)),
@@ -94,12 +105,59 @@ export function useGameState(): HookGameState {
   );
 
   const { redCost, blackCost } = useMemo(() => {
-    const state = piecesToEngineState(pieces, currentTurn);
     return {
-      redCost: evaluateState(state, "red"),
-      blackCost: evaluateState(state, "black")
+      redCost: evaluateState(gameState, "red"),
+      blackCost: evaluateState(gameState, "black")
     };
-  }, [pieces, currentTurn]);
+  }, [gameState]);
+
+  useEffect(() => {
+    if (mode !== "ai-vs-ai" || !autoPlayActive || winner) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      const moveState = piecesToEngineState(pieces, currentTurn);
+
+      if (strategy === "minimax") {
+        const result = chooseBestMove(moveState, currentTurn, 3);
+        if (!result.move) {
+          setAutoPlayActive(false);
+          setEngineMessage("Minimax no encontró jugada.");
+          setSearchStatus("Sin jugada disponible.");
+          return;
+        }
+
+        const ended = applyEngineMove(result.move);
+        setEngineMessage(
+          `Minimax eligió ${squareToNotation(engineIndexToBoardSquare(result.move.from))} -> ${squareToNotation(engineIndexToBoardSquare(result.move.to))}.`
+        );
+        setSearchStatus(`Minimax: ${result.stats.expandedNodes} nodos, puntuación ${result.score.toFixed(1)}`);
+        if (ended) {
+          setAutoPlayActive(false);
+        }
+        return;
+      }
+
+      const result = solveWithAStar(moveState, currentTurn, 2000);
+      if (!result.found || result.moves.length === 0) {
+        setAutoPlayActive(false);
+        setEngineMessage("A* no encontró jugada.");
+        setSearchStatus("Sin jugada disponible.");
+        return;
+      }
+
+      const firstMove = result.moves[0];
+      const ended = applyEngineMove(firstMove);
+      setEngineMessage("A* ejecutó primer paso del plan.");
+      setSearchStatus(`A*: ${result.stats.expandedNodes} nodos, profundidad ${result.stats.depthReached}`);
+      if (ended) {
+        setAutoPlayActive(false);
+      }
+    }, 2000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [autoPlayActive, mode, winner, strategy, pieces, currentTurn]);
 
   /* ── Helpers ─────────────────────────────────────────────── */
 
@@ -108,47 +166,52 @@ export function useGameState(): HookGameState {
     setLegalMoves([]);
   }
 
-  function toggleTurn(): void {
-    setCurrentTurn((turn) => (turn === "red" ? "black" : "red"));
-  }
-
-  function movePiece(pieceId: string, targetSquare: BoardSquare): void {
-    const piece = pieces.find((entry) => entry.id === pieceId);
+  function movePiece(move: Move): boolean {
+    const fromSquare = engineIndexToBoardSquare(move.from);
+    const targetSquare = engineIndexToBoardSquare(move.to);
+    const piece = getPieceAt(fromSquare.row, fromSquare.col, pieces);
     if (!piece) {
-      return;
+      return false;
     }
 
-    const from = { row: piece.row, col: piece.col };
+    const route = [fromSquare, ...move.steps.map((step) => engineIndexToBoardSquare(step.to))];
     const newPieces = pieces.map((entry) =>
-      entry.id === pieceId ? { ...entry, row: targetSquare.row, col: targetSquare.col } : entry
+      entry.id === piece.id ? { ...entry, row: targetSquare.row, col: targetSquare.col } : entry
     );
-    const newTurn = currentTurn === "red" ? "black" : "red";
+    const newTurn = move.player === "red" ? "black" : "red";
     const nextState = piecesToEngineState(newPieces, newTurn);
     setHeuristicHistory((prev) => [...prev, [evaluateState(nextState, "red"), evaluateState(nextState, "black")]]);
 
     setPieces(newPieces);
-    setMoveLog((current) => [...current, createMoveRecord(piece.color, from, targetSquare, current.length)]);
+    setMoveLog((current) => [...current, createMoveRecord(piece.color, fromSquare, targetSquare, current.length, route)]);
     clearSelection();
-    toggleTurn();
-    setSummaryMessage(
-      `${piece.color === "red" ? "Rojo" : "Negro"} movió ${squareToNotation(from)} -> ${squareToNotation(targetSquare)}.`
-    );
+    setCurrentTurn(newTurn);
+
+    const nextWinner = engineWinner(nextState);
+    if (nextWinner) {
+      setPlannedMoves([]);
+      setAutoPlayActive(false);
+      setSummaryMessage(`Gana ${nextWinner === "red" ? "Rojo" : "Negro"} al completar su formación objetivo.`);
+      return true;
+    } else {
+      setSummaryMessage(
+        `${piece.color === "red" ? "Rojo" : "Negro"} movió ${route.map(squareToNotation).join(" -> ")}.`
+      );
+    }
+    return false;
   }
 
   function findPieceAtSquare(square: BoardSquare): Piece | undefined {
     return pieces.find((p) => p.row === square.row && p.col === square.col);
   }
 
-  function applyEngineMove(engineMove: Move): void {
-    const fromSquare = engineIndexToBoardSquare(engineMove.from);
-    const toSquare = engineIndexToBoardSquare(engineMove.to);
-    const piece = findPieceAtSquare(fromSquare);
-    if (!piece) return;
-    movePiece(piece.id, toSquare);
+  function applyEngineMove(engineMove: Move): boolean {
+    return movePiece(engineMove);
   }
 
-  function matchMoveInList(moveList: BoardSquare[], target: BoardSquare): boolean {
-    return moveList.some((m) => isSameSquare(m, target));
+  function matchMoveInList(moveList: Move[], target: BoardSquare): Move | null {
+    const targetIndex = boardSquareToEngineIndex(target);
+    return moveList.find((move) => move.to === targetIndex) ?? null;
   }
 
   /* ── Actions ─────────────────────────────────────────────── */
@@ -159,6 +222,10 @@ export function useGameState(): HookGameState {
     clearSelection();
     setMoveLog([]);
     setPlannedMoves([]);
+    setPlannedExpandedNodes(0);
+    setPlannedSearchDuration(null);
+    setPlannedSearchReason(null);
+    setAutoPlayActive(false);
     setHeuristicHistory([]);
     setSummaryMessage("Selecciona una ficha y luego una casilla resaltada para realizar una jugada.");
     setEngineMessage("Listo para analizar.");
@@ -166,6 +233,11 @@ export function useGameState(): HookGameState {
   }
 
   function selectSquare(square: BoardSquare): void {
+    if (winner) {
+      setSummaryMessage(`La partida terminó. Gana ${winner === "red" ? "Rojo" : "Negro"}.`);
+      return;
+    }
+
     const piece = findPieceAtSquare(square);
 
     if (piece && piece.color === currentTurn) {
@@ -175,34 +247,55 @@ export function useGameState(): HookGameState {
       return;
     }
 
-    if (selectedPieceId && matchMoveInList(legalMoves, square)) {
-      movePiece(selectedPieceId, square);
+    if (selectedPieceId) {
+      const selectedMove = matchMoveInList(legalMoves, square);
+      if (selectedMove) {
+        movePiece(selectedMove);
+      }
     }
   }
 
   function analyzeWithAStar(): void {
-    const state = piecesToEngineState(pieces, currentTurn);
-    const result = solveWithAStar(state, currentTurn, 3000);
+    if (winner) {
+      setEngineMessage(`La partida ya terminó. Gana ${winner === "red" ? "Rojo" : "Negro"}.`);
+      return;
+    }
+
+    const result = solveWithAStar(gameState, currentTurn, 3000);
 
     if (result.found && result.moves.length > 0) {
       setPlannedMoves(result.moves);
+      setPlannedExpandedNodes(result.stats.expandedNodes);
+      setPlannedSearchDuration(result.stats.durationMs);
+      setPlannedSearchReason(result.stats.reason);
       setEngineMessage(`Plan A* generado: ${result.moves.length} movimientos.`);
       setSearchStatus(
         `A*: ${result.stats.expandedNodes} nodos, ${result.stats.visitedStates} estados, ${result.stats.durationMs.toFixed(0)}ms`
       );
     } else if (result.moves.length > 0) {
       setPlannedMoves(result.moves);
+      setPlannedExpandedNodes(result.stats.expandedNodes);
+      setPlannedSearchDuration(result.stats.durationMs);
+      setPlannedSearchReason(result.stats.reason);
       setEngineMessage("A* no encontró la meta, pero se guardó la mejor frontera.");
       setSearchStatus(
         `A*: ${result.stats.expandedNodes} nodos expandidos, profundidad ${result.stats.depthReached}`
       );
     } else {
+      setPlannedExpandedNodes(result.stats.expandedNodes);
+      setPlannedSearchDuration(result.stats.durationMs);
+      setPlannedSearchReason(result.stats.reason);
       setEngineMessage("No hay jugadas disponibles para analizar.");
       setSearchStatus("A* no encontró una expansión válida.");
     }
   }
 
   function advancePlan(): void {
+    if (winner) {
+      setEngineMessage(`La partida ya terminó. Gana ${winner === "red" ? "Rojo" : "Negro"}.`);
+      return;
+    }
+
     if (plannedMoves.length === 0) {
       setEngineMessage("No hay plan almacenado.");
       return;
@@ -218,22 +311,37 @@ export function useGameState(): HookGameState {
       return;
     }
 
-    applyEngineMove(nextMove);
-    setPlannedMoves(remaining);
-    setEngineMessage(remaining.length === 0 ? "Plan A* completado." : `Se avanzó un paso del plan (quedan ${remaining.length}).`);
+    const ended = applyEngineMove(nextMove);
+    setPlannedMoves(ended ? [] : remaining);
+    setEngineMessage(
+      ended
+        ? "El plan terminó en una jugada ganadora."
+        : remaining.length === 0
+          ? "Plan A* completado."
+          : `Se avanzó un paso del plan (quedan ${remaining.length}).`
+    );
   }
 
   const playAiMove = useCallback(() => {
-    const aiColor = mode === "human-vs-ai" ? (humanColor === "red" ? "black" : "red") : currentTurn;
-    if (mode === "human-vs-ai" && currentTurn !== aiColor) {
+    if (winner) {
+      setEngineMessage(`La partida ya terminó. Gana ${winner === "red" ? "Rojo" : "Negro"}.`);
+      return;
+    }
+
+    if (mode === "ai-vs-ai") {
+      setAutoPlayActive(true);
+      setEngineMessage("IA vs IA en ejecución automática. La primera jugada se ejecutará en 2 segundos.");
+      return;
+    }
+
+    const aiColor = humanColor === "red" ? "black" : "red";
+    if (currentTurn !== aiColor) {
       setEngineMessage("Es el turno del humano.");
       return;
     }
 
-    const state = piecesToEngineState(pieces, currentTurn);
-
     if (strategy === "minimax") {
-      const result = chooseBestMove(state, aiColor, 3);
+      const result = chooseBestMove(gameState, aiColor, 3);
       if (!result.move) {
         setEngineMessage("Minimax no encontró jugada.");
         setSearchStatus("Sin jugada disponible.");
@@ -245,7 +353,7 @@ export function useGameState(): HookGameState {
         `Minimax: ${result.stats.expandedNodes} nodos, puntuación ${result.score.toFixed(1)}`
       );
     } else {
-      const result = solveWithAStar(state, aiColor, 2000);
+      const result = solveWithAStar(gameState, aiColor, 2000);
       if (!result.found || result.moves.length === 0) {
         setEngineMessage("A* no encontró jugada.");
         setSearchStatus("Sin jugada disponible.");
@@ -258,7 +366,7 @@ export function useGameState(): HookGameState {
         `A*: ${result.stats.expandedNodes} nodos, profundidad ${result.stats.depthReached}`
       );
     }
-  }, [mode, humanColor, strategy, pieces, currentTurn]);
+  }, [mode, humanColor, strategy, currentTurn, winner, gameState]);
 
   /* ── return ──────────────────────────────────────────────── */
 
@@ -267,6 +375,7 @@ export function useGameState(): HookGameState {
     pieces,
     selectedPieceId,
     legalMoves,
+    winner,
     moveLog,
     plannedRoute,
     plannedMoves,
@@ -282,9 +391,10 @@ export function useGameState(): HookGameState {
     blackLegalMoves,
     heuristicHistory,
     plannedSteps: plannedMoves.length,
-    plannedExpandedNodes: 0,
-    plannedSearchDuration: null,
-    plannedSearchReason: null,
+    plannedExpandedNodes,
+    plannedSearchDuration,
+    plannedSearchReason,
+    autoPlayActive,
     setMode,
     setHumanColor,
     setStrategy,

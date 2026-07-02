@@ -15,6 +15,13 @@ export interface Direction {
   label: string;
 }
 
+export interface MoveStep {
+  from: CellIndex;
+  over: CellIndex;
+  to: CellIndex;
+  direction: Direction;
+}
+
 export type CellIndex = number;
 
 export interface GameState {
@@ -28,8 +35,8 @@ export interface Move {
   from: CellIndex;
   to: CellIndex;
   kind: MoveKind;
-  direction: Direction;
   path: CellIndex[];
+  steps: MoveStep[];
 }
 
 export interface SearchStats {
@@ -52,4 +59,3 @@ export interface MoveSelectionResult {
   score: number;
   stats: SearchStats;
 }
-

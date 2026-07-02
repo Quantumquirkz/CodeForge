@@ -1,11 +1,12 @@
 import type { BoardSquare, Piece } from "../../types/game";
+import type { Move } from "../../engine/types";
 import { Board } from "../board/Board";
 import { Icon } from "../ui/Icon";
 
 type BoardPanelProps = {
   pieces: Piece[];
   selectedPieceId: string | null;
-  legalMoves: BoardSquare[];
+  legalMoves: Move[];
   onSelectSquare: (square: BoardSquare) => void;
 };
 

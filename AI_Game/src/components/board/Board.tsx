@@ -1,12 +1,13 @@
 import { BOARD_SIZE, COLUMN_LABELS } from "../../data/mockGame";
 import type { BoardSquare, Piece as PieceType } from "../../types/game";
+import type { Move } from "../../engine/types";
 import { squareKey } from "../../utils/game";
 import { Piece } from "./Piece";
 
 type BoardProps = {
   pieces: PieceType[];
   selectedPieceId: string | null;
-  legalMoves: BoardSquare[];
+  legalMoves: Move[];
   onSelectSquare: (square: BoardSquare) => void;
 };
 
@@ -32,7 +33,12 @@ export function Board({ pieces, selectedPieceId, legalMoves, onSelectSquare }: B
               const row = BOARD_SIZE - rowIndex;
               const col = colIndex;
               const piece = pieces.find((entry) => entry.row === row && entry.col === col);
-              const highlighted = legalMoves.some((move) => move.row === row && move.col === col);
+              const highlighted = legalMoves.some((move) => {
+                const target = move.to;
+                const targetRow = BOARD_SIZE - Math.floor(target / BOARD_SIZE);
+                const targetCol = target % BOARD_SIZE;
+                return targetRow === row && targetCol === col;
+              });
               const square = { row, col };
               const isDark = (rowIndex + colIndex) % 2 === 1;
 

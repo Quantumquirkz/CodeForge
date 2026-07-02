@@ -1,13 +1,14 @@
 type MatchSummaryCardProps = {
   currentTurnLabel: string;
+  winnerLabel: string | null;
   message: string;
 };
 
-export function MatchSummaryCard({ currentTurnLabel, message }: MatchSummaryCardProps) {
+export function MatchSummaryCard({ currentTurnLabel, winnerLabel, message }: MatchSummaryCardProps) {
   return (
     <section className="summary-card">
       <span className="eyebrow">Resumen de partida</span>
-      <h2 className="summary-card__title">{currentTurnLabel} al turno</h2>
+      <h2 className="summary-card__title">{winnerLabel ? `${winnerLabel} gana` : `${currentTurnLabel} al turno`}</h2>
       <p className="summary-card__text">{message}</p>
       <div className="legend-row">
         <span className="legend-item">

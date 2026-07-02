@@ -69,18 +69,18 @@ export function engineStateToPieces(state: GameState): Piece[] {
 
 /* ── Engine-derived legal moves for a specific piece ───────── */
 
-export function generateLegalMovesForPiece(piece: Piece, pieces: Piece[], turn: PlayerColor): BoardSquare[] {
+export function generateLegalMovesForPiece(piece: Piece, pieces: Piece[], turn: PlayerColor): Move[] {
   const state = piecesToEngineState(pieces, turn);
   const pieceEngineIdx = boardSquareToEngineIndex({ row: piece.row, col: piece.col });
-  const allMoves = generateMoves(state, turn);
+  const allMoves = generateMoves(state, piece.color);
   return allMoves
     .filter((move) => move.from === pieceEngineIdx)
-    .map((move) => engineIndexToBoardSquare(move.to));
+    .sort((a, b) => b.path.length - a.path.length || a.to - b.to);
 }
 
 export function countLegalMovesForColor(color: PlayerColor, pieces: Piece[], turn: PlayerColor): number {
   const state = piecesToEngineState(pieces, turn);
-  const allMoves = generateMoves(state, turn);
+  const allMoves = generateMoves(state, color);
   return allMoves.filter((move) => move.player === color).length;
 }
 
@@ -106,13 +106,20 @@ export function squareKey(square: BoardSquare): string {
   return `${square.row}:${square.col}`;
 }
 
-export function createMoveRecord(color: PlayerColor, from: BoardSquare, to: BoardSquare, index: number): MoveRecord {
+export function createMoveRecord(
+  color: PlayerColor,
+  from: BoardSquare,
+  to: BoardSquare,
+  index: number,
+  route?: BoardSquare[]
+): MoveRecord {
+  const notationRoute = route && route.length > 0 ? route : [from, to];
   return {
     id: `move-${index + 1}`,
     color,
     from,
     to,
-    notation: `${color === "red" ? "Rojo" : "Negro"}: ${squareToNotation(from)} -> ${squareToNotation(to)}`,
+    notation: `${color === "red" ? "Rojo" : "Negro"}: ${notationRoute.map(squareToNotation).join(" -> ")}`,
     timestamp: new Date().toLocaleTimeString("es-PA", { hour: "2-digit", minute: "2-digit" })
   };
 }
@@ -120,4 +127,3 @@ export function createMoveRecord(color: PlayerColor, from: BoardSquare, to: Boar
 export function initialPieces(): Piece[] {
   return engineStateToPieces(initialState());
 }
-

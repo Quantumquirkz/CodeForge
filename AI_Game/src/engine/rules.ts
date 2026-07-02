@@ -1,5 +1,6 @@
 import {
   addCell,
+  cellBit,
   distanceChebyshev,
   hasCell,
   indexFromPosition,
@@ -7,9 +8,10 @@ import {
   indicesFromMask,
   maskFromIndices,
   positionFromIndex,
+  removeCell,
   stateKey
 } from "./board";
-import type { Direction, GameState, Move, Player, CellIndex } from "./types";
+import type { Direction, GameState, Move, MoveStep, Player, CellIndex } from "./types";
 
 const ALL_DIRECTIONS: Direction[] = [
   { dr: -1, dc: -1, label: "up-left" },
@@ -55,7 +57,7 @@ export function goalMask(player: Player): bigint {
 }
 
 export function isGoalReached(state: GameState, player: Player): boolean {
-  return (state[player] & goalMask(player)) === goalMask(player);
+  return state[player] === goalMask(player);
 }
 
 export function winner(state: GameState): Player | null {
@@ -76,69 +78,161 @@ function minDistToGoal(from: CellIndex, player: Player): number {
   return Math.min(...goalCells(player).map((g) => distanceChebyshev(from, g)));
 }
 
+export function isForwardProgress(from: CellIndex, to: CellIndex, player: Player): boolean {
+  return minDistToGoal(to, player) <= minDistToGoal(from, player);
+}
+
+function moveKey(move: Move): string {
+  return `${move.player}:${move.from}:${move.to}:${move.path.join(",")}`;
+}
+
+function generateMoveSequences(
+  state: GameState,
+  player: Player,
+  origin: CellIndex,
+  current: CellIndex,
+  moverMask: bigint,
+  visitedLandings: Set<CellIndex>,
+  steps: MoveStep[],
+  path: CellIndex[],
+  seen: Set<string>,
+  moves: Move[]
+): void {
+  const currentPos = positionFromIndex(current);
+  const occupied = ((state.red | state.black) & ~moverMask) | cellBit(current);
+
+  for (const direction of ALL_DIRECTIONS) {
+    const overRow = currentPos.row + direction.dr;
+    const overCol = currentPos.col + direction.dc;
+    const landRow = currentPos.row + 2 * direction.dr;
+    const landCol = currentPos.col + 2 * direction.dc;
+
+    if (!inBounds(overRow, overCol) || !inBounds(landRow, landCol)) {
+      continue;
+    }
+
+    const over = indexFromPosition(overRow, overCol);
+    const land = indexFromPosition(landRow, landCol);
+
+    if (visitedLandings.has(land)) {
+      continue;
+    }
+    if (!hasCell(occupied, over)) {
+      continue;
+    }
+    if (hasCell(occupied, land)) {
+      continue;
+    }
+    if (!isForwardProgress(current, land, player)) {
+      continue;
+    }
+
+    const step: MoveStep = {
+      from: current,
+      over,
+      to: land,
+      direction
+    };
+    const nextSteps = [...steps, step];
+    const nextPath = [...path, over, land];
+    const nextMoverMask = addCell(moverMask, land);
+    const nextMove: Move = {
+      player,
+      from: origin,
+      to: land,
+      kind: "jump",
+      path: nextPath,
+      steps: nextSteps
+    };
+    const key = moveKey(nextMove);
+    if (!seen.has(key)) {
+      seen.add(key);
+      moves.push(nextMove);
+    }
+
+    const nextVisited = new Set(visitedLandings);
+    nextVisited.add(land);
+    generateMoveSequences(
+      state,
+      player,
+      origin,
+      land,
+      nextMoverMask,
+      nextVisited,
+      nextSteps,
+      nextPath,
+      seen,
+      moves
+    );
+  }
+}
+
 export function generateMoves(state: GameState, player: Player = state.turn): Move[] {
   if (winner(state)) {
     return [];
   }
 
   const ownMask = state[player];
-  const occupied = state.red | state.black;
   const moves: Move[] = [];
+  const seen = new Set<string>();
 
   for (const from of indicesFromMask(ownMask)) {
-    const fromDist = minDistToGoal(from, player);
-    const pos = positionFromIndex(from);
-
-    for (const direction of ALL_DIRECTIONS) {
-      const overRow = pos.row + direction.dr;
-      const overCol = pos.col + direction.dc;
-      const landRow = pos.row + 2 * direction.dr;
-      const landCol = pos.col + 2 * direction.dc;
-
-      if (!inBounds(landRow, landCol)) continue;
-
-      const over = indexFromPosition(overRow, overCol);
-      const land = indexFromPosition(landRow, landCol);
-
-      if (!hasCell(occupied, over)) continue;
-      if (hasCell(occupied, land)) continue;
-
-      const landDist = minDistToGoal(land, player);
-      if (landDist > fromDist) continue;
-
-      moves.push({
-        player,
-        from,
-        to: land,
-        kind: "jump",
-        direction,
-        path: [from, over, land]
-      });
-    }
+    const startMask = addCell(0n, from);
+    generateMoveSequences(
+      state,
+      player,
+      from,
+      from,
+      startMask,
+      new Set([from]),
+      [],
+      [from],
+      seen,
+      moves
+    );
   }
 
   return moves;
 }
 
+function isSameMove(a: Move, b: Move): boolean {
+  if (a.player !== b.player || a.from !== b.from || a.to !== b.to || a.kind !== b.kind) {
+    return false;
+  }
+  if (a.path.length !== b.path.length || a.steps.length !== b.steps.length) {
+    return false;
+  }
+  if (a.path.some((cell, index) => cell !== b.path[index])) {
+    return false;
+  }
+  return a.steps.every(
+    (step, index) =>
+      step.from === b.steps[index].from &&
+      step.over === b.steps[index].over &&
+      step.to === b.steps[index].to &&
+      step.direction.label === b.steps[index].direction.label
+  );
+}
+
 export function applyMove(state: GameState, move: Move): GameState {
+  if (winner(state)) {
+    throw new Error("The game is already over.");
+  }
   if (state.turn !== move.player) {
     throw new Error("It is not that player's turn.");
   }
 
-  const legal = generateMoves(state, move.player).some(
-    (candidate) => candidate.from === move.from && candidate.to === move.to
-  );
+  const legal = generateMoves(state, move.player).some((candidate) => isSameMove(candidate, move));
 
   if (!legal) {
     throw new Error("Illegal move.");
   }
 
-  const nextOwn = addCell(state[move.player], move.to);
-  const nextOwnCleared = nextOwn & ~addCell(0n, move.from);
+  const nextOwn = addCell(removeCell(state[move.player], move.from), move.to);
 
   return move.player === "red"
-    ? { red: nextOwnCleared, black: state.black, turn: otherPlayer(move.player) }
-    : { red: state.red, black: nextOwnCleared, turn: otherPlayer(move.player) };
+    ? { red: nextOwn, black: state.black, turn: otherPlayer(move.player) }
+    : { red: state.red, black: nextOwn, turn: otherPlayer(move.player) };
 }
 
 export function boardOccupancy(state: GameState): bigint {
@@ -162,4 +256,3 @@ export function isSameState(a: GameState, b: GameState): boolean {
 export function pieceDistancesToGoals(state: GameState, player: Player): number[] {
   return indicesFromMask(state[player]).map((piece) => minDistToGoal(piece, player));
 }
-
