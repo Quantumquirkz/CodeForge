@@ -20,8 +20,8 @@ export function Header({ activeTab, onTabChange, onToggleTheme, onHelp, themeMod
         <div>
           <h1 className="header-title">6 Damas en Esquina</h1>
           <p className="header-subtitle">
-            Interfaz de análisis para explorar el juego, comparar decisiones y entender cómo se comportan A* y
-            minimax sobre un tablero de 8x8.
+            Tablero 8x8 con seis fichas por color. Cada salto recto va hacia la esquina opuesta, sobre una
+            ficha o una serie contigua de fichas, sin capturas y sin retroceder.
           </p>
         </div>
       </div>

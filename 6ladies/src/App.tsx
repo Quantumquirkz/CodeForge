@@ -5,6 +5,7 @@ import { Header } from "./components/dashboard/Header";
 import { MatchSummaryCard } from "./components/dashboard/MatchSummaryCard";
 import { KpiCard } from "./components/dashboard/KpiCard";
 import { ControlSidebar } from "./components/dashboard/ControlSidebar";
+import { RulesCard } from "./components/dashboard/RulesCard";
 import { BoardPanel } from "./components/dashboard/BoardPanel";
 import { PositionReadingCard } from "./components/dashboard/PositionReadingCard";
 import { HeuristicChartCard } from "./components/dashboard/HeuristicChartCard";
@@ -119,7 +120,7 @@ function App() {
           activeTab={activeTab}
           onTabChange={scrollToSection}
           onToggleTheme={toggleTheme}
-          onHelp={() => scrollToSection("board")}
+          onHelp={() => document.getElementById("rules-section")?.scrollIntoView({ behavior: "smooth", block: "start" })}
           themeMode={themeMode}
         />
       }
@@ -142,6 +143,7 @@ function App() {
             onAdvance={game.advancePlan}
             onPlayAi={game.playAiMove}
           />
+          <RulesCard />
           <EngineAnalysisCard
             redCost={game.redCost}
             blackCost={game.blackCost}

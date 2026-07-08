@@ -33,6 +33,8 @@ export type DecisionTreeNode = {
   symbol?: string;
   symbolSize?: number | number[];
   collapsed?: boolean;
+  score?: number;
+  bestChild?: boolean;
   itemStyle?: {
     color?: string;
     borderColor?: string;

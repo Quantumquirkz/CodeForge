@@ -7,6 +7,7 @@ import { CanvasRenderer } from "echarts/renderers";
 
 import type { GameOutcome } from "../../engine/outcome";
 import type { DecisionTreeNode } from "../../types/game";
+import { simplifyTree, cloneTree } from "../../utils/treeSimplifier";
 
 echarts.use([TreeChart, TooltipComponent, CanvasRenderer]);
 
@@ -23,13 +24,6 @@ type GameStateGraphCardProps = {
 };
 
 type TreeView = "general" | "red" | "black";
-
-function normalizeTree(node: DecisionTreeNode): DecisionTreeNode {
-  return {
-    ...node,
-    children: node.children?.map(normalizeTree)
-  };
-}
 
 function treeLabel(view: TreeView): string {
   if (view === "red") return "Rojas";
@@ -57,15 +51,24 @@ export function GameStateGraphCard({
   const chartRef = useRef<HTMLDivElement | null>(null);
   const chartInstanceRef = useRef<echarts.EChartsType | null>(null);
   const [view, setView] = useState<TreeView>("general");
+  const [compact, setCompact] = useState(true);
 
   const selectedTree = view === "red" ? treeDataRed : view === "black" ? treeDataBlack : treeDataGeneral;
 
+  const processedTree = useMemo(() => {
+    if (!active || !selectedTree) return null;
+    const raw = cloneTree(selectedTree);
+    if (compact) {
+      return simplifyTree(raw);
+    }
+    return raw;
+  }, [active, selectedTree, compact]);
+
   const option = useMemo<EChartsOption>(() => {
-    if (!active || !selectedTree) {
+    if (!active || !processedTree) {
       return { backgroundColor: "transparent", series: [] };
     }
 
-    const tree = normalizeTree(selectedTree);
     const accent = treeTone(view);
 
     return {
@@ -85,33 +88,34 @@ export function GameStateGraphCard({
       series: [
         {
           type: "tree",
-          data: [tree],
-          top: "10%",
-          left: "3%",
-          right: "3%",
-          bottom: "10%",
+          data: [processedTree],
+          top: "8%",
+          left: "2%",
+          right: "6%",
+          bottom: "8%",
           symbol: "emptyCircle",
-          symbolSize: 14,
+          symbolSize: 12,
           roam: true,
           expandAndCollapse: true,
-          initialTreeDepth: 20,
-          orient: "TB",
+          initialTreeDepth: compact ? 2 : 20,
+          orient: "LR",
           edgeShape: "polyline",
           edgeForkPosition: "50%",
-          nodePadding: 18,
-          layerPadding: 56,
+          nodePadding: 14,
+          layerPadding: 48,
           label: {
-            position: "top",
+            position: "right",
             verticalAlign: "middle",
-            align: "center",
+            align: "left",
             fontSize: 11,
             fontWeight: 600,
             color: "#0f172a"
           },
           leaves: {
             label: {
-              position: "bottom",
-              align: "center"
+              position: "right",
+              align: "left",
+              verticalAlign: "middle"
             }
           },
           emphasis: {
@@ -119,14 +123,14 @@ export function GameStateGraphCard({
           },
           lineStyle: {
             color: accent,
-            width: 1.6,
+            width: 1.4,
             curveness: 0,
-            opacity: 0.7
+            opacity: 0.6
           }
         }
       ]
     };
-  }, [active, selectedTree, view]);
+  }, [active, processedTree, view, compact]);
 
   useEffect(() => {
     if (!active || !chartRef.current) {
@@ -171,7 +175,9 @@ export function GameStateGraphCard({
       : "Partida terminada en empate"
     : aiThinking
       ? "El árbol crece en tiempo real"
-      : "Árbol de decisiones acumulado";
+      : compact
+        ? "Árbol simplificado (3 ramas máx., 2 niveles de profundidad)"
+        : "Árbol de decisiones completo";
 
   return (
     <section className="analytics-card game-graph-card game-graph-card--large">
@@ -181,6 +187,22 @@ export function GameStateGraphCard({
           <strong className="analytics-card__headline">{treeLabel(view)}</strong>
         </div>
         <div className="game-graph-card__tabs" role="tablist" aria-label="Vistas del árbol">
+          <button
+            type="button"
+            className={`game-graph-card__tab${compact ? " is-active" : ""}`}
+            onClick={() => setCompact(true)}
+            aria-pressed={compact}
+          >
+            Compacta
+          </button>
+          <button
+            type="button"
+            className={`game-graph-card__tab${!compact ? " is-active" : ""}`}
+            onClick={() => setCompact(false)}
+            aria-pressed={!compact}
+          >
+            Completa
+          </button>
           <button type="button" className={`game-graph-card__tab${view === "general" ? " is-active" : ""}`} onClick={() => setView("general")}>
             General
           </button>
@@ -197,8 +219,9 @@ export function GameStateGraphCard({
           <p className="analytics-card__text analytics-card__text--muted">{title}</p>
           <div ref={chartRef} className="game-graph-card__chart game-graph-card__chart--large" aria-label="Árbol de decisiones del juego" role="img" />
           <p className="game-graph-card__caption">
-            El árbol conserva las ramas generadas por cada decisión. La vista general mezcla ambos colores; las vistas por color
-            muestran solo las decisiones de ese jugador.
+            {compact
+              ? "Se muestran hasta 3 alternativas por nodo y 2 niveles de profundidad. Pulsa un nodo colapsado para expandirlo y ver los saltos rectos analizados."
+              : "Árbol completo con todas las ramas generadas a partir de saltos rectos. Cada nodo es expandible/colapsable."}
             {searchStatus ? ` Estado: ${searchStatus}.` : ""}
             {plannedSearchDuration !== null ? ` Tiempo: ${plannedSearchDuration.toFixed(0)} ms.` : ""}
             {plannedExpandedNodes > 0 ? ` Nodos expandidos: ${plannedExpandedNodes}.` : ""}
@@ -207,7 +230,7 @@ export function GameStateGraphCard({
       ) : (
         <div className="game-graph-card__empty">
           <span>Árbol inactivo</span>
-          <p>Se activará cuando comience una partida o cuando la IA genere jugadas.</p>
+          <p>Se activará cuando comience una partida o cuando la IA genere saltos rectos.</p>
         </div>
       )}
     </section>

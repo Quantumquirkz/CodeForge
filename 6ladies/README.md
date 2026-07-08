@@ -15,13 +15,13 @@ Proyecto académico para la asignatura de Inteligencia Artificial.
 - El tablero es de 8x8.
 - Cada color inicia con 6 fichas en formación triangular de esquina.
 - Las fichas solo avanzan hacia la esquina opuesta de su objetivo.
-- Un movimiento puede ser un desplazamiento hacia delante o un salto sobre una cadena contigua de fichas en esa dirección.
+- Un movimiento consiste en un salto recto hacia delante, sobre una ficha o una cadena contigua de fichas, y aterriza en la primera casilla vacía después de esa cadena.
 - Las fichas saltadas permanecen en el tablero.
 
 ## Desarrollo local
 
 ```bash
-cd AI_Game
+cd 6ladies
 npm install
 npm run dev
 ```
@@ -37,4 +37,3 @@ npm run test
 ```bash
 npm run build
 ```
-

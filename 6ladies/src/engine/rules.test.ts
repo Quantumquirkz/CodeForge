@@ -35,24 +35,25 @@ describe("rules engine", () => {
     expect(next.red).not.toBe(state.red);
   });
 
-  it("supports chained jumps as a single move", () => {
+  it("supports jumping over a contiguous series as a single move", () => {
     const state = {
       red: 1n << BigInt(indexFromPosition(4, 0)),
-      black: (1n << BigInt(indexFromPosition(3, 1))) | (1n << BigInt(indexFromPosition(1, 3))),
+      black:
+        (1n << BigInt(indexFromPosition(3, 1))) |
+        (1n << BigInt(indexFromPosition(2, 2))) |
+        (1n << BigInt(indexFromPosition(1, 3))),
       turn: "red" as const
     };
 
     const moves = generateMoves(state, "red");
-    const direct = moves.find((move) => squareName(move.to) === "c6");
-    const chained = moves.find((move) => squareName(move.to) === "e8");
+    const series = moves.find((move) => squareName(move.to) === "e8");
 
-    expect(direct).toBeDefined();
-    expect(direct?.steps).toHaveLength(1);
-    expect(chained).toBeDefined();
-    expect(chained?.steps).toHaveLength(2);
+    expect(series).toBeDefined();
+    expect(series?.path.map(squareName)).toEqual(["a4", "b5", "c6", "d7", "e8"]);
+    expect(series?.steps).toHaveLength(1);
 
-    if (chained) {
-      const next = applyMove(state, chained);
+    if (series) {
+      const next = applyMove(state, series);
       expect(indicesFromMask(next.red).map(squareName)).toEqual(["e8"]);
       expect(next.turn).toBe("black");
     }

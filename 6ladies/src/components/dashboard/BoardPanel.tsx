@@ -32,9 +32,9 @@ export function BoardPanel({ pieces, selectedPieceId, legalMoves, onSelectSquare
         <span>
           {selectedPieceId
             ? legalMoves.length > 0
-              ? `Movimientos disponibles: ${previewSquares.join(", ")}.`
-              : "La ficha seleccionada no tiene jugadas legales."
-            : "Selecciona una ficha para ver sus jugadas disponibles."}
+              ? `Saltos rectos disponibles: ${previewSquares.join(", ")}.`
+              : "La ficha seleccionada no tiene saltos rectos legales."
+            : "Selecciona una ficha para ver sus saltos rectos disponibles."}
         </span>
       </div>
     </section>

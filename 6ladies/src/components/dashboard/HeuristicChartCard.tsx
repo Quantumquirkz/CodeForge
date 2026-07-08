@@ -59,7 +59,7 @@ function niceTicks(min: number, max: number, count = 5): number[] {
 }
 
 /**
- * Gráfica de evolución de la evaluación heurística por jugada.
+ * Gráfica de evolución de la evaluación heurística por salto recto.
  * Valores positivos favorecen al color de la serie. Escala dinámica,
  * línea de cero, relleno de área y valor final de cada serie.
  */
@@ -74,7 +74,7 @@ export function HeuristicChartCard({ red, black }: HeuristicChartCardProps) {
   return (
     <section className="analytics-card">
       <div className="analytics-card__header">
-        <span className="eyebrow">Evolución heurística</span>
+        <span className="eyebrow">Evolución heurística por salto recto</span>
         <div className="legend-row">
           <span className="legend-item">
             <i className="legend-dot legend-dot--red" />
@@ -92,7 +92,7 @@ export function HeuristicChartCard({ red, black }: HeuristicChartCardProps) {
             viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
             className="chart-svg chart-svg--full"
             role="img"
-            aria-label="Evolución de la evaluación heurística por jugada"
+            aria-label="Evolución de la evaluación heurística por salto recto"
           >
             {yTicks.map((tick) => {
               const y = PAD + ((max - tick) / (max - min)) * (HEIGHT - PAD * 2);
@@ -112,13 +112,13 @@ export function HeuristicChartCard({ red, black }: HeuristicChartCardProps) {
             <polyline points={toPoints(black, min, max)} className="chart-line chart-line--black" />
           </svg>
           <div className="chart-caption">
-            Evaluación por jugada (positivo = ventaja del color). Jugadas: {red.length}
+            Evaluación por salto recto (positivo = ventaja del color). Saltos rectos registrados: {red.length}
           </div>
         </>
       ) : (
         <div className="chart-empty">
           <span>No hay datos aún.</span>
-          <small>La evolución aparecerá cuando se registren movimientos.</small>
+          <small>La evolución aparecerá cuando se registren saltos rectos.</small>
         </div>
       )}
     </section>

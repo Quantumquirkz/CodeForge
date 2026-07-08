@@ -41,7 +41,7 @@ export function solveWithAStar(
   start: GameState,
   perspective: Player,
   maxExpansions = 30000,
-  weight = 2
+  weight = 1
 ): SearchResult {
   const startedAt = performance.now();
   const open = new PriorityQueue<AStarNode>((a, b) => a.f - b.f || a.h - b.h);

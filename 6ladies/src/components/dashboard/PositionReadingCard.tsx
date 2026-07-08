@@ -25,7 +25,7 @@ export function PositionReadingCard({ turn, redLegalMoves, blackLegalMoves, redC
         </div>
       </div>
       <div className="reading-metric reading-metric--wide">
-        <span>Coste heurístico (Rojo/Negro)</span>
+        <span>Coste heurístico tras el siguiente salto recto (Rojo/Negro)</span>
         <strong className="text-red">{redCost.toFixed(1)}</strong>
         <span> / </span>
         <strong className="text-black">{blackCost.toFixed(1)}</strong>

@@ -8,11 +8,11 @@ type AStarPlanCardProps = {
 export function AStarPlanCard({ steps, expandedNodes, searchDuration, searchReason }: AStarPlanCardProps) {
   return (
     <section className="analytics-card">
-      <span className="eyebrow">Ruta / Plan A*</span>
+      <span className="eyebrow">Ruta / Plan A* de saltos rectos</span>
       {steps > 0 ? (
         <div className="nested-panel">
           <strong>Plan A*</strong>
-          <p>{steps} paso{steps !== 1 ? "s" : ""} planificado{steps !== 1 ? "s" : ""}.</p>
+          <p>{steps} {steps === 1 ? "salto recto" : "saltos rectos"} planificados.</p>
           {expandedNodes > 0 && (
             <p>Nodos expandidos: {expandedNodes}</p>
           )}
@@ -26,11 +26,11 @@ export function AStarPlanCard({ steps, expandedNodes, searchDuration, searchReas
       ) : (
         <div className="nested-panel">
           <strong>Plan A*</strong>
-          <p>No hay plan almacenado.</p>
+          <p>No hay plan de saltos rectos almacenado.</p>
         </div>
       )}
       <div className="nested-panel nested-panel--row">
-        <span>Pasos pendientes</span>
+        <span>Saltos rectos pendientes</span>
         <strong>{steps}</strong>
       </div>
     </section>

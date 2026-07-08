@@ -111,10 +111,10 @@ function buildMoveNode(move: Move, cost: number, isChosen = false): DecisionTree
   return {
     id: "",
     name,
-    value: move.kind === "jump" ? `Salto · ${cost.toFixed(1)}` : `Avance · ${cost.toFixed(1)}`,
+    value: move.kind === "jump" ? `Salto recto · ${cost.toFixed(1)}` : `Salto recto · ${cost.toFixed(1)}`,
+    score: cost,
     symbol: "circle",
     symbolSize: 18,
-    collapsed: false,
     itemStyle: {
       color: isChosen ? "#f7d79c" : "#ffffff",
       borderColor: highlight,
@@ -129,7 +129,7 @@ function buildMoveNode(move: Move, cost: number, isChosen = false): DecisionTree
       verticalAlign: "middle"
     },
     tooltip: {
-      formatter: `${name}<br/>${move.kind === "jump" ? "salto" : "avance"}<br/>Coste: ${cost.toFixed(1)}`
+      formatter: `${name}<br/>salto recto<br/>Coste: ${cost.toFixed(1)}`
     }
   };
 }
@@ -192,7 +192,7 @@ export function useGameState(): HookGameState {
   const [strategy, setStrategy] = useState<Strategy>("minimax");
   const [outcome, setOutcome] = useState<GameOutcome | null>(null);
   const [summaryMessage, setSummaryMessage] = useState(
-    "Selecciona una ficha y luego una casilla resaltada para realizar una jugada."
+    "Selecciona una ficha y luego una casilla resaltada para realizar un salto recto."
   );
   const [engineMessage, setEngineMessage] = useState("Listo para analizar.");
   const [searchStatus, setSearchStatus] = useState("Sin búsquedas aún.");
@@ -254,7 +254,7 @@ export function useGameState(): HookGameState {
     blackCost: evaluateState(gameState, "black")
   }), [gameState]);
 
-  /* ── Núcleo: aplicar una jugada del motor al estado de React ── */
+  /* ── Núcleo: aplicar un salto recto del motor al estado de React ── */
 
   function registerPosition(state: GameState): number {
     const key = stateKey(state.red, state.black, state.turn);
@@ -334,36 +334,13 @@ export function useGameState(): HookGameState {
         return next;
       }
 
-      for (const { move, cost } of rankedMoves) {
+      for (let i = 0; i < rankedMoves.length; i++) {
+        const { move, cost } = rankedMoves[i];
         const moveId = moveTreeId(treeState.positionId, move);
         const moveNode = {
-          ...buildMoveNode(move, cost),
+          ...buildMoveNode(move, cost, i === 0),
           id: moveId
         };
-        const costNode: DecisionTreeNode = {
-          id: `${moveId}::cost`,
-          name: `Coste ${cost.toFixed(1)}`,
-          value: cost.toFixed(1),
-          symbol: "circle",
-          symbolSize: 16,
-          collapsed: false,
-          itemStyle: {
-            color: cost <= rankedMoves[0]?.cost ? "#e8fff0" : "#ffffff",
-            borderColor: cost <= rankedMoves[0]?.cost ? "#22c55e" : "#cfd8e3",
-            borderWidth: 1.2
-          },
-          label: {
-            color: "#0f172a",
-            fontWeight: 600,
-            fontSize: 11,
-            position: "bottom",
-            align: "center"
-          },
-          tooltip: {
-            formatter: `Coste heurístico/computacional: ${cost.toFixed(1)}`
-          }
-        };
-        moveNode.children = [costNode];
         next = appendTreeChild(next, treeState.positionId, moveNode);
       }
 
@@ -390,26 +367,7 @@ export function useGameState(): HookGameState {
           parentId,
           {
             ...buildMoveNode(move, cost, true),
-            id: moveId,
-            children: [
-              {
-                id: `${moveId}::cost`,
-                name: `Coste ${cost.toFixed(1)}`,
-                value: cost.toFixed(1),
-                itemStyle: {
-                  color: "#f3f4f6",
-                  borderColor: "#94a3b8",
-                  borderWidth: 1
-                },
-                label: {
-                  color: "#0f172a",
-                  fontWeight: 600
-                },
-                tooltip: {
-                  formatter: `Coste heurístico/computacional: ${cost.toFixed(1)}`
-                }
-              }
-            ]
+            id: moveId
           }
         );
       }
@@ -420,7 +378,6 @@ export function useGameState(): HookGameState {
         value: `turno ${turnLabel}`,
         symbol: "roundRect",
         symbolSize: [120, 32],
-        collapsed: false,
         itemStyle: {
           color: "#ffffff",
           borderColor: turnLabel === "Rojo" ? "#d9213f" : "#475569",
@@ -478,7 +435,7 @@ export function useGameState(): HookGameState {
       return true;
     }
 
-    /* Regla de bloqueo: si el jugador al turno no tiene jugadas, pasa. */
+    /* Regla de bloqueo: si el jugador al turno no tiene saltos rectos, pasa. */
     let passes = 0;
     while (!hasAnyMove(nextState) && passes < 2) {
       nextState = passTurn(nextState);
@@ -488,7 +445,7 @@ export function useGameState(): HookGameState {
     if (passes > 0) {
       setSummaryMessage(
         `${piece.color === "red" ? "Rojo" : "Negro"} movió ${route.map(squareToNotation).join(" -> ")}. ` +
-        `${newTurn === "red" ? "Negro" : "Rojo"} no tiene jugadas y pasa el turno.`
+        `${newTurn === "red" ? "Negro" : "Rojo"} no tiene saltos rectos y pasa el turno.`
       );
     } else {
       setSummaryMessage(`${piece.color === "red" ? "Rojo" : "Negro"} movió ${route.map(squareToNotation).join(" -> ")}.`);
@@ -524,24 +481,28 @@ export function useGameState(): HookGameState {
         timeLimitMs: 1200
       });
       if (!result.move) {
-        return { move: null, status: "Sin jugada disponible.", message: "Minimax no encontró jugada." };
+        return { move: null, status: "Sin salto recto disponible.", message: "Minimax no encontró salto recto." };
       }
       return {
         move: result.move,
         status: `Minimax: ${result.stats.expandedNodes} nodos, prof. ${result.stats.depthReached}, puntuación ${result.score.toFixed(1)}`,
-        message: `Minimax eligió ${squareToNotation(engineIndexToBoardSquare(result.move.from))} -> ${squareToNotation(engineIndexToBoardSquare(result.move.to))}.`
+        message: `Minimax eligió un salto recto de ${squareToNotation(engineIndexToBoardSquare(result.move.from))} a ${squareToNotation(engineIndexToBoardSquare(result.move.to))}.`
       };
     }
 
     const result = solveWithAStar(state, state.turn, ASTAR_BUDGET);
-    if (result.moves.length === 0) {
-      return { move: null, status: "Sin jugada disponible.", message: "A* no encontró jugada." };
+    if (!result.found || result.moves.length === 0) {
+      return {
+        move: null,
+        status: "Sin plan completo de A*.",
+        message: "A* es un planificador: no encontró un plan completo con el presupuesto dado."
+      };
     }
     const firstMove = result.moves[0];
     return {
       move: firstMove,
-      status: `A*: ${result.stats.expandedNodes} nodos, plan de ${result.moves.length} jugadas (${result.stats.reason})`,
-      message: `A* ejecutó ${squareToNotation(engineIndexToBoardSquare(firstMove.from))} -> ${squareToNotation(engineIndexToBoardSquare(firstMove.to))} (primer paso del plan).`
+      status: `A*: ${result.stats.expandedNodes} nodos, plan de ${result.moves.length} saltos rectos (${result.stats.reason})`,
+      message: `A* ejecutó un salto recto de ${squareToNotation(engineIndexToBoardSquare(firstMove.from))} a ${squareToNotation(engineIndexToBoardSquare(firstMove.to))} (primer paso del plan).`
     };
   }, [strategy]);
 
@@ -633,7 +594,7 @@ export function useGameState(): HookGameState {
       return;
     }
     if (currentTurn !== humanColor || aiThinking) {
-      setSummaryMessage("Espera: la IA está pensando su jugada.");
+      setSummaryMessage("Espera: la IA está pensando su salto recto.");
       return;
     }
 
@@ -647,8 +608,8 @@ export function useGameState(): HookGameState {
       seedTreeForCurrentPosition(gameState, colorScope(currentTurn));
       setSummaryMessage(
         moves.length > 0
-          ? `Ficha ${piece.color === "red" ? "roja" : "negra"} en ${squareToNotation(square)} seleccionada.`
-          : `La ficha ${piece.color === "red" ? "roja" : "negra"} en ${squareToNotation(square)} no tiene jugadas legales. Prueba otra.`
+          ? `Ficha ${piece.color === "red" ? "roja" : "negra"} en ${squareToNotation(square)} seleccionada. Sus saltos rectos disponibles están resaltados.`
+          : `La ficha ${piece.color === "red" ? "roja" : "negra"} en ${squareToNotation(square)} no tiene saltos rectos legales. Prueba otra.`
       );
       return;
     }
@@ -669,25 +630,22 @@ export function useGameState(): HookGameState {
 
     const result = solveWithAStar(gameState, currentTurn, ASTAR_BUDGET);
 
-    if (result.moves.length > 0) {
+    if (result.found && result.moves.length > 0) {
       setPlannedMoves(result.moves);
       setPlannedExpandedNodes(result.stats.expandedNodes);
       setPlannedSearchDuration(result.stats.durationMs);
       setPlannedSearchReason(result.stats.reason);
-      setEngineMessage(
-        result.found
-          ? `Plan A* generado: ${result.moves.length} jugadas (${result.stats.reason}).`
-          : "A* no alcanzó la meta con el presupuesto dado; se guardó la mejor frontera."
-      );
+      setEngineMessage(`Plan A* generado: ${result.moves.length} saltos rectos (${result.stats.reason}).`);
       setSearchStatus(
         `A*: ${result.stats.expandedNodes} nodos, ${result.stats.visitedStates} estados, ${result.stats.durationMs.toFixed(0)}ms`
       );
     } else {
+      setPlannedMoves([]);
       setPlannedExpandedNodes(result.stats.expandedNodes);
       setPlannedSearchDuration(result.stats.durationMs);
       setPlannedSearchReason(result.stats.reason);
-      setEngineMessage("No hay jugadas disponibles para analizar.");
-      setSearchStatus("A* no encontró una expansión válida.");
+      setEngineMessage("A* no encontró un plan completo con el presupuesto dado.");
+      setSearchStatus(`A*: ${result.stats.expandedNodes} nodos, ${result.stats.visitedStates} estados, ${result.stats.durationMs.toFixed(0)}ms`);
     }
   }
 
@@ -697,7 +655,7 @@ export function useGameState(): HookGameState {
       return;
     }
     if (plannedMoves.length === 0) {
-      setEngineMessage("No hay plan almacenado.");
+      setEngineMessage("No hay plan de saltos rectos almacenado.");
       return;
     }
 
@@ -714,10 +672,10 @@ export function useGameState(): HookGameState {
     setPlannedMoves(ended ? [] : remaining);
     setEngineMessage(
       ended
-        ? "El plan terminó la partida."
+        ? "El plan de saltos rectos terminó la partida."
         : remaining.length === 0
-          ? "Plan A* completado."
-          : `Se avanzó un paso del plan (quedan ${remaining.length}).`
+          ? "Plan A* de saltos rectos completado."
+          : `Se ejecutó un salto recto del plan (quedan ${remaining.length}).`
     );
   }
 
@@ -726,8 +684,12 @@ export function useGameState(): HookGameState {
       setEngineMessage("La partida ya terminó.");
       return;
     }
+    if (strategy === "astar" && mode === "ai-vs-ai") {
+      setEngineMessage("A* es un planificador: usa Analizar con A* y Avanzar plan en lugar de IA vs IA.");
+      return;
+    }
     if (aiThinking) {
-      setEngineMessage("La IA ya está pensando su jugada.");
+      setEngineMessage("La IA ya está pensando su salto recto.");
       return;
     }
     if (mode === "ai-vs-ai") {
@@ -753,7 +715,7 @@ export function useGameState(): HookGameState {
     if (move) {
       movePiece(move);
     }
-  }, [gameOver, aiThinking, mode, currentTurn, aiColor, autoPlayActive, pieces, computeAiMove]);
+  }, [gameOver, aiThinking, mode, strategy, currentTurn, aiColor, autoPlayActive, pieces, computeAiMove]);
 
   /* ── return ──────────────────────────────────────────────── */
 

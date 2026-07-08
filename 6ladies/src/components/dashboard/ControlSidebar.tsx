@@ -82,7 +82,7 @@ export function ControlSidebar(props: ControlSidebarProps) {
           value={props.strategy}
           options={[
             { value: "minimax", label: "Minimax" },
-            { value: "astar", label: "A*" }
+            { value: "astar", label: "A* (plan)" }
           ]}
           onChange={props.onStrategyChange}
           adornment={<Icon name="chart" className="icon icon--tiny" />}

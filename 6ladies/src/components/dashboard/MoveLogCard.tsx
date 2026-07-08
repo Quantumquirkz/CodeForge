@@ -12,7 +12,7 @@ function downloadCsv(csv: string): void {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = `ai-game-movimientos-${new Date().toISOString().slice(0, 19).replaceAll(":", "-")}.csv`;
+  anchor.download = `ai-game-saltos-${new Date().toISOString().slice(0, 19).replaceAll(":", "-")}.csv`;
   anchor.click();
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
@@ -26,7 +26,7 @@ export function MoveLogCard({ moveLog }: MoveLogCardProps) {
       <div className="analytics-card__header">
         <span className="eyebrow">Registro en tiempo real</span>
         <div className="move-log__header-actions">
-          <Badge tone="accent">{moveLog.length} movimientos</Badge>
+          <Badge tone="accent">{moveLog.length} saltos</Badge>
           <Button
             variant="secondary"
             onClick={() => downloadCsv(csv)}
@@ -46,7 +46,7 @@ export function MoveLogCard({ moveLog }: MoveLogCardProps) {
       {moveLog.length === 0 ? (
         <div className="empty-log">
           <div className="empty-log__icon">🗎</div>
-          <p>Aún no se han realizado jugadas.</p>
+          <p>Aún no se han realizado saltos rectos.</p>
           <span>La tabla y el CSV se llenarán en tiempo real.</span>
         </div>
       ) : (
@@ -57,7 +57,7 @@ export function MoveLogCard({ moveLog }: MoveLogCardProps) {
                 <tr>
                   <th>#</th>
                   <th>Jugador</th>
-                  <th>Movimiento</th>
+                  <th>Salto</th>
                   <th>Origen</th>
                   <th>Destino</th>
                   <th>Hora</th>
@@ -80,7 +80,7 @@ export function MoveLogCard({ moveLog }: MoveLogCardProps) {
             </table>
           </div>
           <div className="move-log-table__footer">
-            <span>Último movimiento: {latest?.notation ?? "-"}</span>
+            <span>Último salto recto: {latest?.notation ?? "-"}</span>
             <Button
               variant="ghost"
               onClick={() => downloadCsv(csv)}

@@ -1,7 +1,5 @@
 import {
   addCell,
-  cellBit,
-  distanceChebyshev,
   hasCell,
   indexFromPosition,
   inBounds,
@@ -70,96 +68,76 @@ export function otherPlayer(player: Player): Player {
   return player === "red" ? "black" : "red";
 }
 
-function minDistToGoal(from: CellIndex, player: Player): number {
-  return Math.min(...goalCells(player).map((g) => distanceChebyshev(from, g)));
-}
-
-export function isForwardProgress(from: CellIndex, to: CellIndex, player: Player): boolean {
-  return minDistToGoal(to, player) <= minDistToGoal(from, player);
+function isForwardDirection(direction: Direction, player: Player): boolean {
+  // El avance se define respecto a la esquina objetivo: rojo progresa hacia
+  // arriba/derecha; negro, hacia abajo/izquierda. Cualquier componente opuesta
+  // convertiría el salto en retroceso, aunque la distancia total disminuya.
+  if (player === "red") {
+    return direction.dr <= 0 && direction.dc >= 0 && (direction.dr !== 0 || direction.dc !== 0);
+  }
+  return direction.dr >= 0 && direction.dc <= 0 && (direction.dr !== 0 || direction.dc !== 0);
 }
 
 function moveKey(move: Move): string {
   return `${move.player}:${move.from}:${move.to}:${move.path.join(",")}`;
 }
 
-function generateMoveSequences(
+function generateJumpInDirection(
   state: GameState,
   player: Player,
   origin: CellIndex,
-  current: CellIndex,
-  moverMask: bigint,
-  visitedLandings: Set<CellIndex>,
-  steps: MoveStep[],
-  path: CellIndex[],
+  direction: Direction,
   seen: Set<string>,
   moves: Move[]
 ): void {
-  const currentPos = positionFromIndex(current);
-  const occupied = ((state.red | state.black) & ~moverMask) | cellBit(current);
+  if (!isForwardDirection(direction, player)) {
+    return;
+  }
 
-  for (const direction of ALL_DIRECTIONS) {
-    const overRow = currentPos.row + direction.dr;
-    const overCol = currentPos.col + direction.dc;
-    const landRow = currentPos.row + 2 * direction.dr;
-    const landCol = currentPos.col + 2 * direction.dc;
+  const occupied = state.red | state.black;
+  const originPos = positionFromIndex(origin);
+  let row = originPos.row + direction.dr;
+  let col = originPos.col + direction.dc;
+  const crossed: CellIndex[] = [];
 
-    if (!inBounds(overRow, overCol) || !inBounds(landRow, landCol)) {
+  while (inBounds(row, col)) {
+    const current = indexFromPosition(row, col);
+    // Se permite saltar una pieza o una cadena contigua; el aterrizaje debe
+    // ser la primera casilla vacía después del bloque ocupado.
+    if (hasCell(occupied, current)) {
+      crossed.push(current);
+      row += direction.dr;
+      col += direction.dc;
       continue;
     }
 
-    const over = indexFromPosition(overRow, overCol);
-    const land = indexFromPosition(landRow, landCol);
-
-    if (visitedLandings.has(land)) {
-      continue;
-    }
-    if (!hasCell(occupied, over)) {
-      continue;
-    }
-    if (hasCell(occupied, land)) {
-      continue;
-    }
-    if (!isForwardProgress(current, land, player)) {
-      continue;
+    if (crossed.length === 0) {
+      return;
     }
 
-    const step: MoveStep = {
-      from: current,
-      over,
-      to: land,
-      direction
-    };
-    const nextSteps = [...steps, step];
-    const nextPath = [...path, over, land];
-    const nextMoverMask = addCell(moverMask, land);
-    const nextMove: Move = {
+    const landing = current;
+    const move: Move = {
       player,
       from: origin,
-      to: land,
+      to: landing,
       kind: "jump",
-      path: nextPath,
-      steps: nextSteps
+      path: [origin, ...crossed, landing],
+      steps: [
+        {
+          from: origin,
+          over: crossed[0],
+          to: landing,
+          direction
+        }
+      ]
     };
-    const key = moveKey(nextMove);
+
+    const key = moveKey(move);
     if (!seen.has(key)) {
       seen.add(key);
-      moves.push(nextMove);
+      moves.push(move);
     }
-
-    const nextVisited = new Set(visitedLandings);
-    nextVisited.add(land);
-    generateMoveSequences(
-      state,
-      player,
-      origin,
-      land,
-      nextMoverMask,
-      nextVisited,
-      nextSteps,
-      nextPath,
-      seen,
-      moves
-    );
+    return;
   }
 }
 
@@ -173,19 +151,9 @@ export function generateMoves(state: GameState, player: Player = state.turn): Mo
   const seen = new Set<string>();
 
   for (const from of indicesFromMask(ownMask)) {
-    const startMask = addCell(0n, from);
-    generateMoveSequences(
-      state,
-      player,
-      from,
-      from,
-      startMask,
-      new Set([from]),
-      [],
-      [from],
-      seen,
-      moves
-    );
+    for (const direction of ALL_DIRECTIONS) {
+      generateJumpInDirection(state, player, from, direction, seen, moves);
+    }
   }
 
   return moves;
@@ -260,8 +228,4 @@ export function occupiedBy(state: GameState, index: CellIndex): Player | null {
 
 export function isSameState(a: GameState, b: GameState): boolean {
   return stateKey(a.red, a.black, a.turn) === stateKey(b.red, b.black, b.turn);
-}
-
-export function pieceDistancesToGoals(state: GameState, player: Player): number[] {
-  return indicesFromMask(state[player]).map((piece) => minDistToGoal(piece, player));
 }

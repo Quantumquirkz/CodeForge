@@ -119,7 +119,7 @@ export function createMoveRecord(
     color,
     from,
     to,
-    notation: `${color === "red" ? "Rojo" : "Negro"}: ${notationRoute.map(squareToNotation).join(" -> ")}`,
+    notation: `${color === "red" ? "Rojo" : "Negro"}: salto recto ${notationRoute.map(squareToNotation).join(" -> ")}`,
     timestamp: new Date().toLocaleTimeString("es-PA", { hour: "2-digit", minute: "2-digit" })
   };
 }
